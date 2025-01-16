@@ -22,12 +22,12 @@ const Header = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button onClick={handleSearch}>Q</button>
+        <button onClick={handleSearch}>🔍</button>
       </div>
       <div className="icons">
         <span>🔔Thông Báo</span>
         <span>🛒Giỏ Hàng</span>
-        <span>Tài khoản</span>
+        <span>👨‍💼Tài khoản</span>
       </div>
     </header>
   );
