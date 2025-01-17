@@ -51,16 +51,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'black',
   border: '1px solid #dcdcdc',
   borderRadius: theme.shape.borderRadius,
-    '& .MuiInputBase-input': {
+  '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
-    width: '100%',
+    width: '100%',  
     [theme.breakpoints.up('md')]: {
-      width: '40ch',
+      width: '90ch',
     },
   },
 }));
+
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,9 +72,9 @@ const Header = () => {
 
   return (
     <AppBar position="relative" color="inherit">
-      <Toolbar >
+      <Toolbar sx={{ margin: '0 10%', display: 'flex', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2, padding: '0 10%' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <img 
             src={logo} 
             alt="Logo" 
@@ -82,66 +83,47 @@ const Header = () => {
         </Box>
 
         {/* Search Bar */}
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Tìm kiếm..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleSearch();
-              }
-            }}
-          />
-        </Search>
+        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}> 
+          <Search sx={{ width: '50%' }}> {/* Đặt width để giới hạn độ dài */}
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Tìm kiếm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+          </Search>
+        </Box>
 
         {/* Icons */}
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: 'flex', gap: 3, padding: '0 10%'}}>
-          <IconButton 
-            color="inherit"
-            sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center' 
-            }}
-          >
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          <IconButton color="inherit" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Badge badgeContent={0} color="error">
               <Notifications />
             </Badge>
             <Typography variant="caption">Thông báo</Typography>
           </IconButton>
 
-          <IconButton 
-            color="inherit"
-            sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center' 
-            }}
-          >
+          <IconButton color="inherit" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Badge badgeContent={0} color="error">
-            <ShoppingCart />
+              <ShoppingCart />
             </Badge>
             <Typography variant="caption">Giỏ hàng</Typography>
           </IconButton>
 
-          <IconButton 
-            color="inherit"
-            sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center' 
-            }}
-          >
+          <IconButton color="inherit" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <AccountCircle />
             <Typography variant="caption">Tài khoản</Typography>
           </IconButton>
         </Box>
       </Toolbar>
+
     </AppBar>
   );
 };

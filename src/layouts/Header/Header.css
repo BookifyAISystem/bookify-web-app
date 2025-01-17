@@ -1,6 +1,13 @@
 body{ 
   margin: 0;
 }
+
+.header {
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+  padding: 0 10% 0 10%;
+}
+
 /* .header {
   display: flex;
   align-items: center;
