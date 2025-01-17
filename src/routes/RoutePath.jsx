@@ -5,6 +5,7 @@ import CustomerLayout from "../layouts/CustomerLayout/CustomerLayout";
 
 import HomePage from "../components/HomePage/HomePage";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
+import Auth from "../components/Auth/Auth"
 
 const RoutePath = () => {
   return (
@@ -12,7 +13,7 @@ const RoutePath = () => {
       <Routes>
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
-          
+          <Route path="login" element={<Auth />} />
         </Route>
 
         <Route path="*" element={<ErrorPage />} />
