@@ -1,52 +1,54 @@
 import React from 'react';
+import { Box, Divider, Typography, Grid } from '@mui/material';
+import logo from '../../assets/images/Logo.png';
 import './Footer.css';
-import logo from '../../assets/images/Logo.png'
 
 const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-section">
-            <div className="logo">
-                <img src={logo} alt="Logo" />
-            </div>
-            <p className="footer-section-1">Lầu 5, 387-389 Hai Bà Trưng, Quận 3, TP HCM</p>
-            <p className="footer-section-1">Công Ty Cổ Phần Phát Hành Sách TP HCM - FAHASA</p>
-            <p className="footer-section-2">60 - 62 Lê Lợi, Quận 1, TP. HCM, Việt Nam</p>
-            <p className="footer-section-1">Fahasa.com nhận đặt hàng trực tuyến và giao hàng tận nơi.</p>
-            <p className="footer-section-2">KHÔNG hỗ trợ đặt mua và nhận hàng trực tiếp tại văn phòng cũng như tất cả Hệ Thống Fahasa trên toàn quốc.</p>
-        </div>
-        <div className="footer-section">
-            <h3>DỊCH VỤ</h3>
-            <p>Điều khoản sử dụng</p>
-            <p>Chính sách bảo mật thông tin cá nhân</p>
-            <p>Chính sách bảo mật thanh toán</p>
-            <p>Giới thiệu Fahasa</p>
-            <h3>LIÊN HỆ</h3>
-            <p>📍 60-62 Lê Lợi, Q.1, TP. HCM</p>
-        </div>
-        <div className="footer-section">
-            <h3>HỖ TRỢ</h3>
-            <p>Chính sách đổi - trả - hoàn tiền</p>
-            <p>Chính sách bảo hành - bồi hoàn</p>
-            <p>Chính sách vận chuyển</p>
-            <p>Chính sách khách sỉ</p>
-            <br></br>
-            <p>✉️ cskh@fahasa.com.vn</p>
-        </div>
-        <div className="footer-section">
-            <h3>TÀI KHOẢN CỦA TÔI</h3>
-            <p>Đăng nhập/Tạo mới tài khoản</p>
-            <p>Thay đổi địa chỉ khách hàng</p>
-            <p>Chi tiết tài khoản</p>
-            <p>Lịch sử mua hàng</p>
-            <br></br>
-            <p>✆ 1900 636 467</p>
-        </div>
-      </div>
+    <Box className="footer">
+      <Grid container className="footer-content" justifyContent="space-between">
+        <Grid item xs={12} sm={6} md={2.5} className="footer-section">
+          <Box className="logo">
+            <img src={logo} alt="Logo" />
+          </Box>
+          <Typography variant="body2" className="footer-section-1">Lầu 5, 387-389 Hai Bà Trưng, Quận 3, TP HCM</Typography>
+          <Typography variant="body2" className="footer-section-1">Công Ty Cổ Phần Phát Hành Sách TP HCM - FAHASA</Typography>
+          <Typography variant="body2" className="footer-section-2">60 - 62 Lê Lợi, Quận 1, TP. HCM, Việt Nam</Typography>
+          <Typography variant="body2" className="footer-section-1">Fahasa.com nhận đặt hàng trực tuyến và giao hàng tận nơi.</Typography>
+          <Typography variant="body2" className="footer-section-2">KHÔNG hỗ trợ đặt mua và nhận hàng trực tiếp tại văn phòng cũng như tất cả Hệ Thống Fahasa trên toàn quốc.</Typography>
+        </Grid>
 
-      
-    </footer>
+        <Divider orientation="vertical" flexItem />
+        
+        <Grid item xs={12} sm={6} md={2.5} className="footer-section">
+          <Typography variant="h6" sx={{marginBottom: '5px'}}>DỊCH VỤ</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Điều khoản sử dụng</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách bảo mật thông tin cá nhân</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách bảo mật thanh toán</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Giới thiệu Fahasa</Typography>
+          <Typography variant="h6" sx={{marginBottom: '5px'}}>LIÊN HỆ</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>📍 60-62 Lê Lợi, Q.1, TP. HCM</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6} md={2.5} className="footer-section">
+          <Typography variant="h6" sx={{marginBottom: '5px'}}>HỖ TRỢ</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách đổi - trả - hoàn tiền</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách bảo hành - bồi hoàn</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách vận chuyển</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chính sách khách sỉ</Typography>
+          <br></br> <br></br>
+          <Typography variant="body2" className="footer-section-2" sx={{marginBottom: '5px'}}>✉️ cskh@fahasa.com.vn</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6} md={2.5} className="footer-section">
+          <Typography variant="h6" sx={{marginBottom: '5px'}}>TÀI KHOẢN CỦA TÔI</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Đăng nhập/Tạo mới tài khoản</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Thay đổi địa chỉ khách hàng</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Chi tiết tài khoản</Typography>
+          <Typography variant="body2" sx={{marginBottom: '5px'}}>Lịch sử mua hàng</Typography>
+          <br></br> <br></br>
+          <Typography variant="body2" className="footer-section-2" sx={{marginBottom: '5px'}}>✆ 1900 636 467</Typography>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

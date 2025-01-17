@@ -1,6 +1,9 @@
+body{ 
+  margin: 0;
+}
+
 .footer {
   background-color: #f8f8f8;
-  padding: 20px;
   border-top: 1px solid #ddd;
   padding: 0 10% 0 10%;
 }
@@ -15,21 +18,13 @@
   flex-wrap: wrap;
 }
 
-.footer-section {
-  flex: 1;
-  margin: 10px;
-}
-
 .footer-section h3, img {
-  margin-bottom: 10px;
+  margin-bottom: px;
 }
 
-.footer-section-1 {
+.footer-section-1, .footer-section-2 {
   margin: 0;
-}
-
-.footer-section-2 {
-  margin: 0 0 10px 0;
+  line-height: 1.5;
 }
 
 
