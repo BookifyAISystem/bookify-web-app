@@ -1,0 +1,32 @@
+body{ 
+  margin: 0;
+}
+
+.footer {
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+  padding: 0 10% 0 10%;
+}
+
+.logo img {
+    height: 40px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-section h3, img {
+  margin-bottom: px;
+}
+
+.footer-section-1, .footer-section-2 {
+  margin: 0;
+  line-height: 1.5;
+}
+
+
+
+
