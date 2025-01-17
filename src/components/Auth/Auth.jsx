@@ -6,6 +6,14 @@ const Auth = () => {
   const [currentTab, setCurrentTab] = useState(0); // 0: Đăng nhập, 1: Đăng ký, 2: Khôi phục mật khẩu
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState(''); // Thêm state cho xác nhận mật khẩu
+  const [password, setPassword] = useState(''); // Thêm state cho mật khẩu
+  const [newPassword, setNewPassword] = useState(''); // Thêm state cho mật khẩu mới
+
+  // Hàm kiểm tra xác nhận mật khẩu
+  const isPasswordValid = () => {
+    return showPassword && showConfirmPassword && confirmPassword === password; // Kiểm tra mật khẩu khớp
+  };
 
   return (
     <Container maxWidth="sm" sx={{paddingBottom: '1%'}}>
@@ -62,17 +70,20 @@ const Auth = () => {
               label="Mật khẩu"
               type={showPassword ? "text" : "password"}
               margin="normal"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <Button fullWidth variant="contained" sx={{ mt: 2 }}>Đăng ký</Button>
+            <TextField
+              fullWidth
+              label="Xác nhận mật khẩu"
+              type={showConfirmPassword ? "text" : "password"}
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={confirmPassword && confirmPassword !== password}
+              helperText={confirmPassword && confirmPassword !== password ? "Mật khẩu không khớp" : ""}
+            />
+            <Button fullWidth variant="contained" sx={{ mt: 2 }} disabled={!isPasswordValid()}>Đăng ký</Button>
           </Box>
         )}
 
@@ -98,17 +109,20 @@ const Auth = () => {
               label="Mật khẩu mới"
               type={showConfirmPassword ? "text" : "password"}
               margin="normal"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
-            <Button fullWidth variant="contained" sx={{ mt: 2 }}>Xác nhận</Button>
+            <TextField
+              fullWidth
+              label="Xác nhận mật khẩu mới"
+              type={showConfirmPassword ? "text" : "password"}
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={confirmPassword && confirmPassword !== newPassword}
+              helperText={confirmPassword && confirmPassword !== newPassword ? "Mật khẩu không khớp" : ""}
+            />
+            <Button fullWidth variant="contained" sx={{ mt: 2 }} disabled={!isPasswordValid()}>Xác nhận</Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => setCurrentTab(0)}>Trở về</Button>
           </Box>
         )}
