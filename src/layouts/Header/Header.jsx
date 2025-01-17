@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../../assets/images/logo.png'
+import { Link } from 'react-router-dom';
 import './Header.css'
 import {
   AppBar,
@@ -74,7 +75,7 @@ const Header = () => {
     <AppBar position="relative" color="inherit">
       <Toolbar sx={{ margin: '0 10%', display: 'flex', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+        <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <img 
             src={logo} 
             alt="Logo" 
@@ -117,7 +118,7 @@ const Header = () => {
             <Typography variant="caption">Giỏ hàng</Typography>
           </IconButton>
 
-          <IconButton color="inherit" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <IconButton color="inherit" component={Link} to="/login" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <AccountCircle />
             <Typography variant="caption">Tài khoản</Typography>
           </IconButton>
