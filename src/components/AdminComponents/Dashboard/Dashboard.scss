@@ -1,4 +1,5 @@
 @use "../../../styles/variables.scss";
+@use "../../../styles/responsive.scss";
 
 .dashboard{
 
@@ -6,6 +7,20 @@
     gap: 20px;
     grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: minmax(180px, auto);
+
+    @include responsive.xl{
+        grid-template-columns: repeat(3, 1fr);
+    }
+    @include responsive.lg{
+    grid-template-columns: repeat(2, 1fr);
+    }
+    @include responsive.md {
+    grid-template-columns: repeat(1, 1fr);
+    }
+    @include responsive.sm {
+    grid-auto-rows: minmax(120px, auto);
+    }
+
 
     .box{
         padding: 20px;
@@ -27,5 +42,9 @@
     .box7{
         grid-column: span 2;
         grid-row: span 2;
+
+        @include responsive.md {
+            display: none;
+          }
     }
 }

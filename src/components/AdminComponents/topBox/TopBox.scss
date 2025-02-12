@@ -1,8 +1,14 @@
+@use "../../../styles/responsive.scss";
+
 .topBox{
 
 
     h1{
         margin-bottom: 20px;
+
+        @include responsive.xxl{
+            font-size: 24px;
+          }
     }
 
     .list{
@@ -24,6 +30,12 @@
                     border-radius: 50%;
                     object-fit: cover;
 
+                    @include responsive.xxl{
+                        display: none;
+                      }
+                      @include responsive.lg{
+                        display: block;
+                      }
                 }
 
 
@@ -41,6 +53,13 @@
                         font-size: 12px;
 
                     }
+
+                    @include responsive.xxl{
+                        display: none;
+                      }
+                      @include responsive.lg{
+                        display: block;
+                      }
                 }
                 
             }
