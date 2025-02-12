@@ -8,7 +8,7 @@ import {
     XAxis,
     YAxis,
   } from "recharts";
-  import "./single.scss";
+  import "./Single.scss";
   
   const Single = ({ id, img, title, info, chart, activities }) => {
     return (
