@@ -51,24 +51,24 @@ const menu = [
       id: 3,
       title: "general",
       listItems: [
-        {
-          id: 1,
-          title: "Elements",
-          url: "/",
-          icon: "/element.svg",
-        },
+        // {
+        //   id: 1,
+        //   title: "Elements",
+        //   url: "/",
+        //   icon: "/element.svg",
+        // },
         {
           id: 2,
           title: "Notes",
           url: "/",
           icon: "/note.svg",
         },
-        {
-          id: 3,
-          title: "Forms",
-          url: "/",
-          icon: "/form.svg",
-        },
+        // {
+        //   id: 3,
+        //   title: "Forms",
+        //   url: "/",
+        //   icon: "/form.svg",
+        // },
         {
           id: 4,
           title: "Calendar",
@@ -95,24 +95,24 @@ const menu = [
         },
       ],
     },
-    {
-      id: 5,
-      title: "analytics",
-      listItems: [
-        {
-          id: 1,
-          title: "Charts",
-          url: "/",
-          icon: "/chart.svg",
-        },
-        {
-          id: 2,
-          title: "Logs",
-          url: "/",
-          icon: "/log.svg",
-        },
-      ],
-    },
+    // {
+    //   id: 5,
+    //   title: "analytics",
+    //   listItems: [
+    //     {
+    //       id: 1,
+    //       title: "Charts",
+    //       url: "/",
+    //       icon: "/chart.svg",
+    //     },
+    //     {
+    //       id: 2,
+    //       title: "Logs",
+    //       url: "/",
+    //       icon: "/log.svg",
+    //     },
+    //   ],
+    // },
   ];
   
 export default menu;

@@ -57,3 +57,49 @@
       }
     }
   }
+
+  .avatar{
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+    
+  }
+  
+  .MuiPopper-root {
+    z-index: 1200;
+    margin-top: 70px;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+
+  
+    .MuiPaper-root {
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+      padding: 8px; // Giảm padding
+      min-width: 240px; // Giảm kích thước ngang
+      max-width: 260px; // Giữ trong khoảng phù hợp
+    }
+
+    // .MuiTypography-h6 {
+    //   font-size: 14px; // Nhỏ hơn một chút
+    // }
+  
+    // .MuiTypography-body2 {
+    //   font-size: 12px;
+    // }
+  
+    // .MuiTab-root {
+    //   min-width: auto; // Cho tab nhỏ lại
+    //   font-size: 12px;
+    //   padding: 6px;
+    // }
+  }
+
+
+  
+  
+  
