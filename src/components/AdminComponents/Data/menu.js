@@ -41,6 +41,12 @@ const menu = [
         },
         {
           id: 4,
+          title: "Roles",
+          url: "/admin/roles",
+          icon: "/setting.svg",
+        },
+        {
+          id: 5,
           title: "Posts",
           url: "/admin/posts",
           icon: "/post2.svg",
