@@ -14,6 +14,7 @@ import StaffLayout from "../layouts/StaffLayout/StaffLayout";
 import BooKWareHousePage from "../pages/StaffPage/BooKWareHousePage";
 import VoucherPage from "../pages/StaffPage/VoucherPage";
 import OrdersPage from "../pages/StaffPage/OrdersPage";
+import Roles from "../components/AdminComponents/Roles/Roles";
 
 const RoutePath = () => {
   return (
@@ -31,6 +32,7 @@ const RoutePath = () => {
           <Route path="users/:id" element={<User />} />
           <Route path="books" element={<Books />} />
           <Route path="books/:id" element={<Book />} />
+          <Route path="roles" element={<Roles />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
