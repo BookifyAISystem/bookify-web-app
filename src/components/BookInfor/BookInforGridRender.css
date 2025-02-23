@@ -1,0 +1,31 @@
+.container {
+    max-width: 1200px; /* Giới hạn chiều rộng tối đa */
+    margin: 0 auto; /* Căn giữa */
+  }
+  
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cột mỗi hàng */
+    gap: 10px; /* Khoảng cách giữa các card */
+    padding: 20px 0; /* Khoảng cách trên dưới */
+    background: #f8f8f8;
+  }
+  
+  @media (max-width: 1200px) {
+    .book-grid {
+      grid-template-columns: repeat(4, 1fr); /* 4 cột trên màn hình nhỏ hơn */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .book-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 cột trên màn hình nhỏ hơn */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .book-grid {
+      grid-template-columns: repeat(1, 1fr); /* 1 cột trên màn hình rất nhỏ */
+    }
+  }
+  

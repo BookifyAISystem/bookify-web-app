@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import logo from '../../assets/images/logo.png'
 import { Link } from 'react-router-dom';
+import logo from '../../assets/images/logo1.png'
 import './Header.css'
 import {
   AppBar,

@@ -6,18 +6,19 @@ import MenuAdmin from "./menu/MenuAdmin";
 import '../../styles/global.scss';
 
 
+
 function AdminLayout() {
 
   return (
-    <div className="main">
+    <div className="main-admin">
         <Navbar />
 
-        <div className="container">
-            <div className="menuContainer">
+        <div className="container-admin">
+            <div className="menuContainer-admin">
                 <MenuAdmin/>
             </div>
 
-            <div className="contentContainer">
+            <div className="contentContainer-admin">
                 <Outlet />
             </div>
         </div>

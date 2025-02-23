@@ -36,31 +36,24 @@ const columns = [
     field: "phone", 
     type: "string",
     headerName: "Phone", 
-    width: 200 
+    width: 150
   },
   { 
     field: "createdAt", 
     type: "string",
     headerName: "Created At", 
-    width: 200 
+    width: 150 
   },
   { 
     field: "verified", 
     type: "boolean",
     headerName: "Verified", 
-    width: 150 
+    width: 100
   },
 ];
 
 const Users = () => {
   const [open, setOpen] = useState(false);
-
-  // TEST THE API
-  // const { isLoading, data } = useQuery({
-  //   queryKey: ["allusers"],
-  //   queryFn: () =>
-  //     fetch("http://localhost:8800/api/users").then((res) => res.json()),
-  // });
 
 
   return (

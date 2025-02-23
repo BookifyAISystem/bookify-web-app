@@ -14,8 +14,11 @@ const DataTable = ({ columns, rows, slug }) => {
           return (
             <div className="action">
               <Link to={`/admin/${slug}/${params.row.id}`}>
-                <img src="/view.svg" alt="View" />
+                <img src="/view.png" alt="View" />
               </Link>
+              <div className="delete" onClick={() => handleDelete(params.row.id)}>
+                <img src="/edit.svg" alt="Edit" />
+              </div>
               <div className="delete" onClick={() => handleDelete(params.row.id)}>
                 <img src="/delete.svg" alt="Delete" />
               </div>
