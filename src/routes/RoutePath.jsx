@@ -15,6 +15,7 @@ import BooKWareHousePage from "../pages/StaffPage/BooKWareHousePage";
 import VoucherPage from "../pages/StaffPage/VoucherPage";
 import OrdersPage from "../pages/StaffPage/OrdersPage";
 import Roles from "../components/AdminComponents/Roles/Roles";
+import BookDetail from "../components/BookDetail/BookDetail"; // Import trang chi tiết sách
 
 const RoutePath = () => {
   return (
@@ -23,8 +24,16 @@ const RoutePath = () => {
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
+          <Route path="book/:id" element={<BookDetail />} /> 
         </Route>
 
+        <Route path="/staff" element={<StaffLayout />}>
+          <Route index element={<BooKWareHousePage />} />
+          <Route path="book-warehouse" element={<BooKWareHousePage />} />
+          <Route path="vouchers" element={<VoucherPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+        </Route>
+        
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
@@ -35,14 +44,8 @@ const RoutePath = () => {
           <Route path="roles" element={<Roles />} />
         </Route>
 
-        <Route path="/staff" element={<StaffLayout />}>
-          <Route index element={<BooKWareHousePage />} />
-          <Route path="book-warehouse" element={<BooKWareHousePage />} />
-          <Route path="vouchers" element={<VoucherPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-        </Route>
-
-        <Route path="*" element={<ErrorPage />} />
+        
+        <Route path="*" element={<ErrorPage />} /> {/* Route cho trang lỗi */}
       </Routes>
     </BrowserRouter>
   );

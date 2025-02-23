@@ -22,7 +22,7 @@ import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 // import avatar1 from '../../../assets/images/avatar.png';
 // import avatar1 from '../../../../public/noavatar.png';
-import logo from '../../../assets/images/logo.png';
+import logo from '../../../assets/images/logo1.png';
 import './Navbar.scss';
 
 
@@ -48,7 +48,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className='navbar'>
+    <div className='navbaradmin'>
       <div className='logo'>
         <img src={logo} alt='logo' />
       </div>
