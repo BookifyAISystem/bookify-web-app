@@ -1,10 +1,14 @@
-import React from 'react';
+import React from "react";
+import Navbar from "../Navbar/Navbar";
+import Banner from "../Banner/Banner"; // Import Banner
+import BookInforGridRender from "../BookInfor/BookInforGridRender";
 
 const HomePage = () => {
   return (
     <div>
-      <h1>Bookify's temp Home Page</h1>
-      <p>This is a temporary Home Page component.</p>
+      <Navbar />
+      <Banner /> {/* Gọi Banner */}
+      <BookInforGridRender />
     </div>
   );
 };

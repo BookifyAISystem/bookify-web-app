@@ -1,0 +1,43 @@
+.navbar {
+    background-color: #f8f8f8;
+    padding: 10px 0; /* Chỉnh padding để thu nhỏ chiều cao */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .container {
+    max-width: 1200px; /* Giới hạn chiều rộng */
+    margin: 0 auto; /* Căn giữa */
+    padding: 0 15px; /* Thêm khoảng cách hai bên */
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    justify-content: space-around; /* Căn đều các nút */
+    padding: 0;
+    margin: 0;
+  }
+  
+  .navbar-links li {
+    display: inline-block;
+  }
+  
+  .navbar-links button {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .navbar-links button:hover {
+    background: #ff4d4d;
+    color: #fff;
+  }
+  
