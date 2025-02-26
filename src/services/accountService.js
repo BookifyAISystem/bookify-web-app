@@ -2,13 +2,17 @@ import api from "./apiService";
 
 const ACCOUNT_ENDPOINT = "/account";
 
-export const getAllAccounts = async () => {
+export const getAllAccounts = async (page = 1, pageSize = 10) => {
   try {
-    const response = await api.get(ACCOUNT_ENDPOINT);
+    const response = await api.get(`${ACCOUNT_ENDPOINT}/getAccountsPaging`, {
+      params: {
+        Page: page,
+        PageSize: pageSize,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error when fetching all accounts:", error);
-    //throw error;
+    console.error("Error when fetching paginated accounts:", error);
     return null;
   }
 };
