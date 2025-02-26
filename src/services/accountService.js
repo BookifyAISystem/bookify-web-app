@@ -52,14 +52,25 @@ export const createAccount = async (account) => {
 
 export const updateAccount = async (id, account) => {
   try {
-    const response = await api.put(`${ACCOUNT_ENDPOINT}/${id}`, account);
+    const response = await api.put(
+      `${ACCOUNT_ENDPOINT}/updateAccount`,
+      {
+        password: account.password,
+        email: account.email,
+        phone: account.phone
+      },
+      {
+        params: {id: id}
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error when updating Account with id ${id}:`, error);
-    //throw error;
     return null;
   }
 };
+
+
 
 export const deleteAccount = async (id) => {
   try {

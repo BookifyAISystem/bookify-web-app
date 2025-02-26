@@ -3,7 +3,7 @@ import "./Users.scss";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { getAllAccounts } from "../../../services/accountService";
+import { getAllAccounts, updateAccount } from "../../../services/accountService";
 
 const columns = [
   { field: "id", headerName: "ID", width: 90 },
@@ -29,28 +29,51 @@ const Users = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
+  const refreshUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllAccounts(page + 1, pageSize);
+      if (response?.items) {
+        const mappedUsers = response.items.map(user => ({
+          id: user.accountId,
+          username: user.username,
+          displayName: user.displayName,
+          email: user.email,
+          phone: user.phone,
+          createdDate: new Date(user.createdDate).toLocaleString(),
+          lastEdited: new Date(user.lastEdited).toLocaleString(),
+          status: user.status,
+          roleId: user.roleId,
+        }));
+        setUsers(mappedUsers);
+        setTotalCount(response.totalCount);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+    setLoading(false);
+  };
+
+  
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
         const response = await getAllAccounts(page + 1, pageSize);
-        console.log("API Response:", response); // Kiểm tra API có dữ liệu
-        
         if (response?.items) {
           const mappedUsers = response.items.map(user => ({
-            id: user.accountId, // Quan trọng: DataGrid cần trường "id"
+            id: user.accountId,
             username: user.username,
             displayName: user.displayName,
             email: user.email,
             phone: user.phone,
-            createdDate: new Date(user.createdDate),
-            lastEdited: new Date(user.lastEdited),
+            createdDate: new Date(user.createdDate).toLocaleString(),
+            lastEdited: new Date(user.lastEdited).toLocaleString(),
             status: user.status,
             roleId: user.roleId,
           }));
-          
-          console.log("Mapped Users:", mappedUsers); // Kiểm tra dữ liệu đã map đúng chưa
           setUsers(mappedUsers);
           setTotalCount(response.totalCount);
         }
@@ -68,7 +91,6 @@ const Users = () => {
     <div className="users">
       <div className="info">
         <h1>Users</h1>
-        <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
 
       <div className="dataTable">
@@ -84,12 +106,18 @@ const Users = () => {
                 <Link to={`/admin/users/${params.row.id}`}>
                   <img src="/view.png" alt="View" />
                 </Link>
-                <div className="edit" onClick={() => console.log("Edit", params.row.id)}>
+                <div
+                    className="edit"
+                    onClick={() => {
+                      setSelectedUser(params.row);
+                      setOpen(true);
+                    }}
+                >
                   <img src="/edit.svg" alt="Edit" />
                 </div>
-                <div className="delete" onClick={() => console.log("Delete", params.row.id)}>
+                {/* <div className="delete" onClick={() => console.log("Delete", params.row.id)}>
                   <img src="/delete.svg" alt="Delete" />
-                </div>
+                </div> */}
               </div>
             ),
           }]}
@@ -107,33 +135,60 @@ const Users = () => {
         />
       </div>
 
-      {open && <AddUser setOpen={setOpen} />}
+      {open && selectedUser && <AddUser user={selectedUser} setOpen={setOpen} refreshUsers={refreshUsers} />}
     </div>
   );
 };
 
-const AddUser = ({ setOpen }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("User added!");
-    setOpen(false);
+const AddUser = ({ user, setOpen, refreshUsers }) => {
+
+  const [editedUser, setEditedUser] = useState(user);
+
+  const handleChange = (e) => {
+    setEditedUser({ ...editedUser, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedData = {
+        email: editedUser.email,
+        phone: editedUser.phone,
+        password: editedUser.password || "",
+      };
+  
+      const response = await updateAccount(editedUser.id, updatedData);
+      alert('Updated successfully');
+      setOpen(false);
+      await refreshUsers();
+        
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
+  };
+  
+  
 
   return (
     <div className="add">
       <div className="modal">
         <span className="close" onClick={() => setOpen(false)}>X</span>
-        <h1>Add new user</h1>
+        <h1>Edit user</h1>
         <form onSubmit={handleSubmit}>
-          {columns
-            .filter(item => item.field !== "id" && item.field !== "img")
-            .map((column, index) => (
-              <div className="item" key={index}>
-                <label>{column.headerName}</label>
-                <input type={column.type || "text"} placeholder={column.field} />
-              </div>
-            ))}
-          <button type="submit">Add</button>
+          <div className="item">
+            <label>Username</label>
+            <input type="text" placeholder="Username" value={editedUser.username} name="username" onChange={handleChange} disabled/>
+          </div>
+          <div className="item">
+            <label>Email</label>
+            <input type="email" placeholder="Email" value={editedUser.email} name="email" onChange={handleChange} />
+          </div>
+          <div className="item">
+            <label>Phone</label>
+            <input type="text" placeholder="Phone" value={editedUser.phone} name="phone" onChange={handleChange} />
+          </div>
+          
+          <button type="submit">Save</button>
         </form>
       </div>
     </div>
