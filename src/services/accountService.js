@@ -2,13 +2,17 @@ import api from "./apiService";
 
 const ACCOUNT_ENDPOINT = "/account";
 
-export const getAllAccounts = async () => {
+export const getAllAccounts = async (page = 1, pageSize = 10) => {
   try {
-    const response = await api.get(ACCOUNT_ENDPOINT);
+    const response = await api.get(`${ACCOUNT_ENDPOINT}/getAccountsPaging`, {
+      params: {
+        Page: page,
+        PageSize: pageSize,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error("Error when fetching all accounts:", error);
-    //throw error;
+    console.error("Error when fetching paginated accounts:", error);
     return null;
   }
 };
@@ -48,14 +52,25 @@ export const createAccount = async (account) => {
 
 export const updateAccount = async (id, account) => {
   try {
-    const response = await api.put(`${ACCOUNT_ENDPOINT}/${id}`, account);
+    const response = await api.put(
+      `${ACCOUNT_ENDPOINT}/updateAccount`,
+      {
+        password: account.password,
+        email: account.email,
+        phone: account.phone
+      },
+      {
+        params: {id: id}
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error when updating Account with id ${id}:`, error);
-    //throw error;
     return null;
   }
 };
+
+
 
 export const deleteAccount = async (id) => {
   try {
