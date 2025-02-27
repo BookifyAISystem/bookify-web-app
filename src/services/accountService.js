@@ -1,6 +1,7 @@
 import api from "./apiService";
 
 const ACCOUNT_ENDPOINT = "/account";
+const AUTHEN_ENDPOINT = "/authen";
 
 export const getAllAccounts = async (page = 1, pageSize = 10) => {
   try {
@@ -85,7 +86,7 @@ export const deleteAccount = async (id) => {
 
 export const login = async (account) => {
   try {
-    const response = await api.post(`${ACCOUNT_ENDPOINT}/login`, account);
+    const response = await api.post(`${AUTHEN_ENDPOINT}/login`, account);
     return response.data;
   } catch (error) {
     console.error("Error when logging in:", error);

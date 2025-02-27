@@ -1,23 +1,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Tabs, Tab, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
-// Mock data for users
-const mockUsers = [
-  { id: 1, phone: '0123456789', email: 'john@example.com', password: '123' },
-  { id: 2, phone: '0987654321', email: 'jane@example.com', password: 'asd' },
-  { id: 3, phone: '0369852147', email: 'bob@example.com', password: '321' },
-];
-
-// Mock API function to simulate a network request
-const mockApiCall = (data) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log("Mock API call with data:", data);
-      resolve({ success: true, message: "Operation successful" });
-    });
-  });
-};
+import { login } from '../../services/accountService';
 
 const Auth = () => {
   const [currentTab, setCurrentTab] = useState(0); // 0: Đăng nhập, 1: Đăng ký, 2: Khôi phục mật khẩu
@@ -51,45 +35,6 @@ const Auth = () => {
     return showPassword && showConfirmPassword && confirmPassword === password; // Kiểm tra mật khẩu khớp
   };
 
-  // Mock API functions
-  const mockLogin = async (credentials) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const user = mockUsers.find(
-          u => (u.email === credentials.username || u.phone === credentials.username) 
-          && u.password === credentials.password
-        );
-        
-        if (user) {
-          resolve({ success: true, message: 'Đăng nhập thành công', user });
-        } else {
-          reject({ success: false, message: 'Thông tin đăng nhập không chính xác' });
-        }
-      });
-    });
-  };
-
-  const mockRegister = async (userData) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const existingUser = mockUsers.find(
-          u => u.phone === userData.phone || u.email === userData.email
-        );
-
-        if (existingUser) {
-          reject({ success: false, message: 'Số điện thoại hoặc email đã tồn tại' });
-        } else {
-          const newUser = {
-            id: mockUsers.length + 1,
-            ...userData
-          };
-          mockUsers.push(newUser);
-          resolve({ success: true, message: 'Đăng ký thành công', user: newUser });
-        }
-      });
-    });
-  };
-
   const mockResetPassword = async (data) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -115,12 +60,13 @@ const Auth = () => {
   // Handler functions
   const handleLogin = async () => {
     try {
-      const response = await mockLogin({ 
-        username: email,
+      const response = await login({ 
+        email: email,
         password: password 
       });
-      console.log(response.message);
-      alert(response.message);
+      console.log(response);
+      // console.log(response.message);
+      // alert(response.message);
     } catch (error) {
       console.error(error.message);
       alert(error.message);

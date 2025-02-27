@@ -24,6 +24,7 @@ import SettingTab from './SettingTab';
 // import avatar1 from '../../../../public/noavatar.png';
 import logo from '../../../assets/images/logo1.png';
 import './Navbar.scss';
+import { Link } from 'react-router-dom';
 
 
 const Navbar = () => {
@@ -50,7 +51,10 @@ const Navbar = () => {
   return (
     <div className='navbaradmin'>
       <div className='logo'>
-        <img src={logo} alt='logo' />
+        <Link to='/admin'>
+          <img src={logo} alt='logo' />
+        </Link>
+        
       </div>
       <div className='icons'>
         <img src='/search.svg' alt='' className='icon' />
