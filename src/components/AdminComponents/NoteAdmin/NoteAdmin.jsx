@@ -108,11 +108,11 @@ const NoteAdmin = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '10%' }}>ID</TableCell>
-              <TableCell style={{ width: '40%', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>Content</TableCell>
+              <TableCell style={{ width: '5%' }}>ID</TableCell>
+              <TableCell style={{ width: '55%', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>Content</TableCell>
               <TableCell style={{ width: '15%' }}>Created Date</TableCell>
               <TableCell style={{ width: '15%' }}>Last Edited</TableCell>
-              <TableCell style={{ width: '20%' }}>Action</TableCell>
+              <TableCell style={{ width: '10%' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
