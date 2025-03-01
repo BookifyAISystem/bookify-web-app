@@ -66,7 +66,7 @@ const menu = [
         {
           id: 2,
           title: "Notes",
-          url: "/",
+          url: "/admin/notes",
           icon: "/note.svg",
         },
         // {
