@@ -125,7 +125,7 @@ const Auth = () => {
             <Typography variant="h6">Đăng nhập</Typography>
             <TextField 
               fullWidth 
-              label="Số điện thoại/Email" 
+              label="Email" 
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
