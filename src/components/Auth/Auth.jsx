@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Tabs, Tab, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { login } from '../../services/accountService';
+import { login, decodeToken } from '../../services/accountService';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import auth from "../../services/firebaseConfig";
+
+const provider = new GoogleAuthProvider();
+
 
 const Auth = () => {
   const [currentTab, setCurrentTab] = useState(0); // 0: Đăng nhập, 1: Đăng ký, 2: Khôi phục mật khẩu
@@ -60,19 +66,47 @@ const Auth = () => {
   // Handler functions
   const handleLogin = async () => {
     try {
-      const response = await login({ 
+      const response = await login({
         email: email,
-        password: password 
+        password: password,
       });
-      console.log(response);
-      // console.log(response.message);
-      // alert(response.message);
+  
+      if (response) {
+        alert("Đăng nhập thành công!");
+        window.location.href = "/";
+      } else {
+        alert("Email hoặc mật khẩu không đúng!");
+      }
     } catch (error) {
       console.error(error.message);
-      alert(error.message);
+      alert("Có lỗi xảy ra khi đăng nhập!");
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+  
+      if (user) {
+        const token = await user.getIdToken(); // Lấy ID Token đúng chuẩn Google
+        console.log("Firebase Token:", token);
+  
+        await fetch("http://localhost:7088/api/authen/google", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      alert("Có lỗi khi đăng nhập Google!");
+    }
+  };
+  
+  
   const handleRegister = async () => {
     try {
       const response = await mockRegister({
@@ -149,6 +183,7 @@ const Auth = () => {
             />
             <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleLogin}>Đăng nhập</Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => setCurrentTab(2)}>Quên mật khẩu?</Button>
+            <Button fullWidth variant="outlined" sx={{ mt: 2 }} onClick={handleGoogleLogin}>Đăng nhập với Google</Button>
           </Box>
         )}
 
