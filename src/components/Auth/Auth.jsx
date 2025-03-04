@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Tabs, Tab, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { login, decodeToken } from '../../services/accountService';
+import { login, decodeToken, register } from '../../services/accountService';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import auth from "../../services/firebaseConfig";
@@ -18,6 +18,8 @@ const Auth = () => {
   const [newPassword, setNewPassword] = useState(''); // Thêm state cho mật khẩu mới
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [userName, setUserName] = useState('');
+  const [fullName, setFullName] = useState('');
 
   // Hàm để làm mới state
   const resetFields = () => {
@@ -89,7 +91,7 @@ const Auth = () => {
       const user = result.user;
   
       if (user) {
-        const token = await user.getIdToken(); // Lấy ID Token đúng chuẩn Google
+        const token = await user.getIdToken();
         console.log("Firebase Token:", token);
   
         await fetch("http://localhost:7088/api/authen/google", {
@@ -109,14 +111,19 @@ const Auth = () => {
   
   const handleRegister = async () => {
     try {
-      const response = await mockRegister({
-        phone: phone,
-        email: email,
-        password: password
+      const response = await register({
+        UserName: userName,
+        Password: password,
+        Email: email,
+        PhoneNumber: phone,
+        Address: null,
+        FullName: fullName,
+        Avatar: null
       });
-      console.log(response.message);
-      alert(response.message);
+      console.log("Đăng ký thành công!");
+      alert("Đăng ký thành công!");
       setCurrentTab(0);
+      resetFields();
     } catch (error) {
       console.error(error.message);
       alert(error.message);
@@ -193,19 +200,25 @@ const Auth = () => {
             <Typography variant="h6">Đăng ký</Typography>
             <TextField
               fullWidth
-              label="Số điện thoại"
+              label="Fullname"
               margin="normal"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button variant="outlined" size="small">Gửi mã OTP</Button>
-                  </InputAdornment>
-                ),
-              }}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
             />
-            <TextField fullWidth label="Mã xác nhận OTP" margin="normal" />
+            <TextField
+              fullWidth
+              label="Username"
+              margin="normal"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <TextField
               fullWidth
               label="Mật khẩu"
@@ -223,6 +236,13 @@ const Auth = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={confirmPassword && confirmPassword !== password}
               helperText={confirmPassword && confirmPassword !== password ? "Mật khẩu không khớp" : ""}
+            />
+            <TextField
+              fullWidth
+              label="Phone Number"
+              margin="normal"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
             <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleRegister}>Đăng ký</Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => setCurrentTab(0)}>Trở về</Button>

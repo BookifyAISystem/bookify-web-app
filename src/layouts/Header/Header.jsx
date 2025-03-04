@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo1.png'
 import './Header.css'
@@ -11,7 +11,8 @@ import {
   Badge,
   Box,
   styled,
-  alpha
+  alpha,
+  Avatar
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -66,10 +67,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [user, setUser] = useState(null);
 
   const handleSearch = () => {
     console.log('Searching for:', searchTerm);
   };
+
+  useEffect(() => {
+    const token = JSON.parse(localStorage.getItem('userInfo'));
+    if (token) {
+      setUser({
+        name: token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        email: token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        avatar: null,
+      });
+    }
+  }, []);
+  
 
   return (
     <AppBar position="relative" color="inherit">
@@ -118,10 +132,18 @@ const Header = () => {
             <Typography variant="caption">Giỏ hàng</Typography>
           </IconButton>
 
-          <IconButton color="inherit" component={Link} to="/login" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <AccountCircle />
-            <Typography variant="caption">Tài khoản</Typography>
-          </IconButton>
+          {user ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Avatar src={user.avatar} alt={user.name} />
+            <Typography variant="caption">{user.name}</Typography>
+          </Box>
+          ) : (
+            <IconButton color="inherit" component={Link} to="/login" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <AccountCircle />
+              <Typography variant="caption">Tài khoản</Typography>
+            </IconButton>
+          )}
+
         </Box>
       </Toolbar>
 

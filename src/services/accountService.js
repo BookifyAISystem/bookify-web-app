@@ -134,6 +134,17 @@ export const login = async (account) => {
   }
 };
 
+export const register = async (account) => {
+  try {
+    const response = await api.post(`${AUTHEN_ENDPOINT}/register`, account);
+    return response.data;
+  } catch (error) {
+    console.error("Error when registering:", error);
+    //throw error;
+    return null;
+  }
+}
+
 
 export const logout = async () => {
   try {
