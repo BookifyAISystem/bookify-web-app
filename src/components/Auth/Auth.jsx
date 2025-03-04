@@ -5,11 +5,14 @@ import { login, decodeToken, register } from '../../services/accountService';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import auth from "../../services/firebaseConfig";
+import { useNavigate } from 'react-router-dom';
 
 const provider = new GoogleAuthProvider();
 
 
 const Auth = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0); // 0: Đăng nhập, 1: Đăng ký, 2: Khôi phục mật khẩu
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -75,7 +78,21 @@ const Auth = () => {
   
       if (response) {
         alert("Đăng nhập thành công!");
-        window.location.href = "/";
+        
+
+        switch (response.toLowerCase()) {
+          case "user":
+            window.location.href = '/';
+            break;
+          case "staff":
+            window.location.href = '/staff';
+            break;
+          case "admin":
+            window.location.href = '/admin';
+            break;
+          default:
+            break;
+        }
       } else {
         alert("Email hoặc mật khẩu không đúng!");
       }
@@ -170,6 +187,7 @@ const Auth = () => {
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
             />
             <TextField
               fullWidth
@@ -178,6 +196,7 @@ const Auth = () => {
               margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

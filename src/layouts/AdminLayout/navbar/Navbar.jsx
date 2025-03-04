@@ -1,4 +1,4 @@
-import React from 'react' 
+import React, { useEffect} from 'react' 
 import { useState, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -28,7 +28,8 @@ import { Link } from 'react-router-dom';
 
 
 const Navbar = () => {
-  const theme = useTheme();
+  const theme = useTheme();  
+  const [user, setUser] = useState(null);
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
@@ -47,6 +48,18 @@ const Navbar = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+      const token = JSON.parse(localStorage.getItem('userInfo'));
+      if (token) {
+        setUser({
+          name: token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+          email: token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+          role: token["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+          avatar: null,
+        });
+      }
+    }, []);
 
   return (
     <div className='navbaradmin'>
@@ -95,17 +108,13 @@ const Navbar = () => {
                         <Stack direction='row' spacing={1.25} alignItems='center'>
                           <Avatar alt='' src='./noavatar.png' className='avatar' />
                           <Stack>
-                            <Typography variant='h6'>Admin</Typography>
-                            <Typography variant='body2' color='text.secondary'>System Admin</Typography>
+                            <Typography variant='h6'>{user.name}</Typography>
+                            <Typography variant='body2' color='text.secondary'>{user.role}</Typography>
                           </Stack>
-                        </Stack>
-                      </Grid>
-                      <Grid item>
-                        {/* <Tooltip className='mui-tooltip' title='Logout'> */}
                           <IconButton size='large'>
                             <LogoutOutlined />
                           </IconButton>
-                        {/* </Tooltip> */}
+                        </Stack>
                       </Grid>
                     </Grid>
                   </CardContent>

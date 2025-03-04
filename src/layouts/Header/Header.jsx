@@ -127,7 +127,7 @@ const Header = () => {
 
   return (
     <AppBar position="relative" color="inherit">
-      <Toolbar sx={{ margin: '0 5%', display: 'flex', justifyContent: 'space-between' }}>
+      <Toolbar sx={{ margin: '0 3%', display: 'flex', justifyContent: 'space-between' }}>
         {/* Logo */}
         <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <img 

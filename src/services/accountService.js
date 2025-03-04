@@ -119,11 +119,12 @@ export const login = async (account) => {
 
       if (userInfo) {
         console.log("User Info:", userInfo);
+        console.log("Role:", userInfo["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
         localStorage.setItem("authToken", token);
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
       }
 
-      return response.data;
+      return userInfo["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     } else {
       console.error("Login failed:", response.data.message);
       return null;
