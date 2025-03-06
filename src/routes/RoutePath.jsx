@@ -17,6 +17,8 @@ import OrdersPage from "../pages/StaffPage/OrdersPage";
 import Roles from "../components/AdminComponents/Roles/Roles";
 import BookDetail from "../components/BookDetail/BookDetail";
 import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
+import NotePage from "../pages/StaffPage/NotePage";
+import CategoryPage from "../pages/StaffPage/CategoryPage";
 
 const RoutePath = () => {
   return (
@@ -33,6 +35,8 @@ const RoutePath = () => {
           <Route path="book-warehouse" element={<BooKWareHousePage />} />
           <Route path="vouchers" element={<VoucherPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="note" element={<NotePage />} />
+          <Route path="category" element={<CategoryPage />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
