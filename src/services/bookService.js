@@ -4,7 +4,7 @@ const BOOK_ENDPOINT = "/book";
 
 export const getAllBooks = async () => {
     try {
-        const response = await api.get(BOOK_ENDPOINT);
+        const response = await api.get(BOOK_ENDPOINT+'s');
         return response.data;
     } catch (error) {
         console.error("Error when fetching all books:", error);
