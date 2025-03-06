@@ -1,6 +1,29 @@
 import api from "./apiService";
+import { jwtDecode } from "jwt-decode";
 
 const ACCOUNT_ENDPOINT = "/account";
+const AUTHEN_ENDPOINT = "/authen";
+
+
+export const decodeToken = (token) => {
+  try {
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("Decoded Token:", decoded);
+      return decoded;
+    }
+    return null;
+  } catch (error) {
+    console.error("Invalid Token", error);
+    return null;
+  }
+};
+
+export const getUserInfo = () => {
+  const userInfo = localStorage.getItem("userInfo");
+  return userInfo ? JSON.parse(userInfo) : null;
+};
+
 
 export const getAllAccounts = async (page = 1, pageSize = 10) => {
   try {
@@ -85,14 +108,44 @@ export const deleteAccount = async (id) => {
 
 export const login = async (account) => {
   try {
-    const response = await api.post(`${ACCOUNT_ENDPOINT}/login`, account);
-    return response.data;
+    const response = await api.post(`${AUTHEN_ENDPOINT}/login`, account);
+
+    if (response.status === 200) {
+      const token = response.data.token;
+      console.log("Token:", token);
+
+      // Decode token trực tiếp
+      const userInfo = decodeToken(token);
+
+      if (userInfo) {
+        console.log("User Info:", userInfo);
+        console.log("Role:", userInfo["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      }
+
+      return userInfo["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    } else {
+      console.error("Login failed:", response.data.message);
+      return null;
+    }
   } catch (error) {
     console.error("Error when logging in:", error);
-    //throw error;
     return null;
   }
 };
+
+export const register = async (account) => {
+  try {
+    const response = await api.post(`${AUTHEN_ENDPOINT}/register`, account);
+    return response.data;
+  } catch (error) {
+    console.error("Error when registering:", error);
+    //throw error;
+    return null;
+  }
+}
+
 
 export const logout = async () => {
   try {

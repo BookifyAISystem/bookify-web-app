@@ -4,6 +4,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getAllAccounts, updateAccount } from "../../../services/accountService";
+import { getRoleById } from "../../../services/roleService";
 
 const columns = [
   { field: "id", headerName: "ID", width: 90 },
@@ -42,8 +43,8 @@ const Users = () => {
           displayName: user.displayName,
           email: user.email,
           phone: user.phone,
-          createdDate: new Date(user.createdDate).toLocaleString(),
-          lastEdited: new Date(user.lastEdited).toLocaleString(),
+          createdDate: new Date(user.createdDate),
+          lastEdited: new Date(user.lastEdited),
           status: user.status,
           roleId: user.roleId,
         }));
@@ -84,6 +85,7 @@ const Users = () => {
     };
     fetchUsers();
   }, [page, pageSize]);
+
   
   
 

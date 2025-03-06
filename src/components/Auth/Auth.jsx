@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Tabs, Tab, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { login, decodeToken, register } from '../../services/accountService';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import auth from "../../services/firebaseConfig";
+import { useNavigate } from 'react-router-dom';
 
-// Mock data for users
-const mockUsers = [
-  { id: 1, phone: '0123456789', email: 'john@example.com', password: '123' },
-  { id: 2, phone: '0987654321', email: 'jane@example.com', password: 'asd' },
-  { id: 3, phone: '0369852147', email: 'bob@example.com', password: '321' },
-];
+const provider = new GoogleAuthProvider();
 
-// Mock API function to simulate a network request
-const mockApiCall = (data) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log("Mock API call with data:", data);
-      resolve({ success: true, message: "Operation successful" });
-    });
-  });
-};
 
 const Auth = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0); // 0: Đăng nhập, 1: Đăng ký, 2: Khôi phục mật khẩu
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,6 +21,8 @@ const Auth = () => {
   const [newPassword, setNewPassword] = useState(''); // Thêm state cho mật khẩu mới
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [userName, setUserName] = useState('');
+  const [fullName, setFullName] = useState('');
 
   // Hàm để làm mới state
   const resetFields = () => {
@@ -49,45 +44,6 @@ const Auth = () => {
   // Hàm kiểm tra xác nhận mật khẩu
   const isPasswordValid = () => {
     return showPassword && showConfirmPassword && confirmPassword === password; // Kiểm tra mật khẩu khớp
-  };
-
-  // Mock API functions
-  const mockLogin = async (credentials) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const user = mockUsers.find(
-          u => (u.email === credentials.username || u.phone === credentials.username) 
-          && u.password === credentials.password
-        );
-        
-        if (user) {
-          resolve({ success: true, message: 'Đăng nhập thành công', user });
-        } else {
-          reject({ success: false, message: 'Thông tin đăng nhập không chính xác' });
-        }
-      });
-    });
-  };
-
-  const mockRegister = async (userData) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const existingUser = mockUsers.find(
-          u => u.phone === userData.phone || u.email === userData.email
-        );
-
-        if (existingUser) {
-          reject({ success: false, message: 'Số điện thoại hoặc email đã tồn tại' });
-        } else {
-          const newUser = {
-            id: mockUsers.length + 1,
-            ...userData
-          };
-          mockUsers.push(newUser);
-          resolve({ success: true, message: 'Đăng ký thành công', user: newUser });
-        }
-      });
-    });
   };
 
   const mockResetPassword = async (data) => {
@@ -115,28 +71,76 @@ const Auth = () => {
   // Handler functions
   const handleLogin = async () => {
     try {
-      const response = await mockLogin({ 
-        username: email,
-        password: password 
+      const response = await login({
+        email: email,
+        password: password,
       });
-      console.log(response.message);
-      alert(response.message);
+  
+      if (response) {
+        alert("Đăng nhập thành công!");
+        
+
+        switch (response.toLowerCase()) {
+          case "user":
+            window.location.href = '/';
+            break;
+          case "staff":
+            window.location.href = '/staff';
+            break;
+          case "admin":
+            window.location.href = '/admin';
+            break;
+          default:
+            break;
+        }
+      } else {
+        alert("Email hoặc mật khẩu không đúng!");
+      }
     } catch (error) {
       console.error(error.message);
-      alert(error.message);
+      alert("Có lỗi xảy ra khi đăng nhập!");
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+  
+      if (user) {
+        const token = await user.getIdToken();
+        console.log("Firebase Token:", token);
+  
+        await fetch("http://localhost:7088/api/authen/google", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      alert("Có lỗi khi đăng nhập Google!");
+    }
+  };
+  
+  
   const handleRegister = async () => {
     try {
-      const response = await mockRegister({
-        phone: phone,
-        email: email,
-        password: password
+      const response = await register({
+        UserName: userName,
+        Password: password,
+        Email: email,
+        PhoneNumber: phone,
+        Address: null,
+        FullName: fullName,
+        Avatar: null
       });
-      console.log(response.message);
-      alert(response.message);
+      console.log("Đăng ký thành công!");
+      alert("Đăng ký thành công!");
       setCurrentTab(0);
+      resetFields();
     } catch (error) {
       console.error(error.message);
       alert(error.message);
@@ -179,10 +183,11 @@ const Auth = () => {
             <Typography variant="h6">Đăng nhập</Typography>
             <TextField 
               fullWidth 
-              label="Số điện thoại/Email" 
+              label="Email" 
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
             />
             <TextField
               fullWidth
@@ -191,6 +196,7 @@ const Auth = () => {
               margin="normal"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -203,6 +209,7 @@ const Auth = () => {
             />
             <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleLogin}>Đăng nhập</Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => setCurrentTab(2)}>Quên mật khẩu?</Button>
+            <Button fullWidth variant="outlined" sx={{ mt: 2 }} onClick={handleGoogleLogin}>Đăng nhập với Google</Button>
           </Box>
         )}
 
@@ -212,19 +219,25 @@ const Auth = () => {
             <Typography variant="h6">Đăng ký</Typography>
             <TextField
               fullWidth
-              label="Số điện thoại"
+              label="Fullname"
               margin="normal"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button variant="outlined" size="small">Gửi mã OTP</Button>
-                  </InputAdornment>
-                ),
-              }}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
             />
-            <TextField fullWidth label="Mã xác nhận OTP" margin="normal" />
+            <TextField
+              fullWidth
+              label="Username"
+              margin="normal"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              margin="normal"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <TextField
               fullWidth
               label="Mật khẩu"
@@ -242,6 +255,13 @@ const Auth = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={confirmPassword && confirmPassword !== password}
               helperText={confirmPassword && confirmPassword !== password ? "Mật khẩu không khớp" : ""}
+            />
+            <TextField
+              fullWidth
+              label="Phone Number"
+              margin="normal"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
             <Button fullWidth variant="contained" sx={{ mt: 2 }} onClick={handleRegister}>Đăng ký</Button>
             <Button fullWidth sx={{ mt: 1 }} onClick={() => setCurrentTab(0)}>Trở về</Button>

@@ -15,7 +15,10 @@ import BooKWareHousePage from "../pages/StaffPage/BooKWareHousePage";
 import VoucherPage from "../pages/StaffPage/VoucherPage";
 import OrdersPage from "../pages/StaffPage/OrdersPage";
 import Roles from "../components/AdminComponents/Roles/Roles";
-import BookDetail from "../components/BookDetail/BookDetail"; // Import trang chi tiết sách
+import BookDetail from "../components/BookDetail/BookDetail";
+import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
+import NotePage from "../pages/StaffPage/NotePage";
+import CategoryPage from "../pages/StaffPage/CategoryPage";
 
 const RoutePath = () => {
   return (
@@ -32,6 +35,8 @@ const RoutePath = () => {
           <Route path="book-warehouse" element={<BooKWareHousePage />} />
           <Route path="vouchers" element={<VoucherPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="note" element={<NotePage />} />
+          <Route path="category" element={<CategoryPage />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>
@@ -42,6 +47,7 @@ const RoutePath = () => {
           <Route path="books" element={<Books />} />
           <Route path="books/:id" element={<Book />} />
           <Route path="roles" element={<Roles />} />
+          <Route path="notes" element={<NoteAdmin />} />
         </Route>
 
         
