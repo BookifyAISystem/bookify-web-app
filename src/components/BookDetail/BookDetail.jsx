@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import mockData from "../../data/mockData";
+import { getBookById } from "../../services/bookService";
 import "./BookDetail.css";
 
 const BookDetail = () => {
   const { id } = useParams();
-  const book = mockData.books.find((b) => b.book_id === parseInt(id));
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBookDetail = async () => {
+      const data = await getBookById(id);
+      if (data) {
+        setBook(data);
+      } else {
+        console.error("Không tìm thấy sách!");
+      }
+      setLoading(false);
+    };
+
+    fetchBookDetail();
+  }, [id]);
+
+  if (loading) {
+    return <p>Đang tải dữ liệu...</p>;
+  }
 
   if (!book) {
     return <p>Không tìm thấy sách!</p>;
@@ -14,9 +33,12 @@ const BookDetail = () => {
   return (
     <div className="book-detail-container">
       <div className="book-detail">
-        {/* Phần bên trái: Hình ảnh và nút */}
         <div className="book-detail-left">
-          <img src={book.book_image} alt={book.book_name} className="book-detail-image" />
+          <img
+            src={book.bookImage}
+            alt={book.bookName}
+            className="book-detail-image"
+          />
           <div className="book-actions">
             <button className="add-to-cart">
               <i className="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
@@ -39,34 +61,36 @@ const BookDetail = () => {
           </div>
         </div>
 
-        {/* Phần bên phải: Thông tin sách */}
         <div className="book-detail-right">
-          <h1 className="book-title">{book.book_name}</h1>
-          {book.price_ebook ? (
-            <>
-              <p className="book-price">{book.price_ebook.toLocaleString()} VND</p>
-              <p className="book-original-price">
-                Giá gốc: <s>{book.price.toLocaleString()} VND</s>
+          <h1 className="book-title">{book.bookName}</h1>
+          
+          <div className="book-price-section">
+            <p className="book-price">
+              Giá sách in: <strong>{book.price.toLocaleString()} VND</strong>
+            </p>
+            {book.priceEbook && (
+              <p className="book-ebook-price">
+                Giá sách điện tử: <strong>{book.priceEbook.toLocaleString()} VND</strong>
               </p>
-            </>
-          ) : (
-            <p className="book-price">{book.price.toLocaleString()} VND</p>
-          )}
+            )}
+          </div>
+
           <div className="book-description">
             <h3>Mô tả</h3>
-            <p>{book.description}</p>
+            <p>{book.bookContent}</p>
           </div>
+
           <div className="book-specifications">
             <h3>Thông tin chi tiết</h3>
             <table>
               <tbody>
                 <tr>
                   <th>Năm xuất bản</th>
-                  <td>{book.pulish_year}</td>
+                  <td>{book.publishYear || "Đang cập nhật"}</td>
                 </tr>
                 <tr>
                   <th>Thể loại</th>
-                  <td>{book.book_type}</td>
+                  <td>{book.bookType || "Đang cập nhật"}</td>
                 </tr>
               </tbody>
             </table>

@@ -1,69 +1,40 @@
 .book-card {
-  width: 200px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
+  width: 360px;
+  border-radius: 10px;
+  padding: 15px;
   text-align: center;
-  background: #fff;
   transition: box-shadow 0.3s ease, transform 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .book-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   transform: translateY(-5px);
 }
 
 .book-image {
   width: 100%;
-  height: auto;
+  height: 350px;
+  object-fit: contain;
   border-radius: 8px;
-  margin-bottom: 8px; 
+  margin-bottom: 10px;
 }
 
 .book-title {
-  font-size: 16px; 
+  font-size: 18px;
   font-weight: bold;
   color: #333;
-  margin: 5px 0; 
-  line-height: 1.2;
-  height: auto; 
-}
-
-.book-subtitle {
-  font-size: 14px; 
-  color: #666;
-  margin-bottom: 5px; 
-}
-
-.book-price-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
-  gap: 2px; 
-}
-
-.book-original-price {
-  font-size: 14px; 
-  text-decoration: line-through;
-  color: #aaa;
-}
-
-.book-price {
-  font-size: 16px; 
-  font-weight: bold;
-  color: red;
+  margin: 5px 0;
 }
 
 .book-description {
-  font-size: 14px; 
+  font-size: 14px;
   color: #555;
-  margin: 5px 0; 
+  margin: 5px 0;
   line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -72,8 +43,63 @@
   -webkit-box-orient: vertical;
 }
 
-.book-year {
-  font-size: 14px; 
-  color: #777;
-  margin-top: 5px; 
+.book-price-section {
+  margin-bottom: 10px;
 }
+
+.book-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e63946;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.buy-button, .cart-button {
+  padding: 10px 0;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  width: 50%;
+  border-radius: 5px;
+}
+
+/* Nút giỏ hàng */
+.cart-button {
+  background-color: #fff;
+  color: #e63946;
+  border: 1px solid #e63946;
+}
+
+.cart-button:hover {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.cart-button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Nút Mua ngay */
+.buy-button {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.buy-button:hover {
+  background-color: #c82333;
+}
+ 
