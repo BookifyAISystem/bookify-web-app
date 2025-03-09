@@ -42,14 +42,16 @@ export const getAllAccounts = async (page = 1, pageSize = 10) => {
 
 export const getAccountById = async (id) => {
   try {
-    const response = await api.get(`${ACCOUNT_ENDPOINT}/${id}`);
+    const response = await api.get(`/account/getAccont`, {
+      params: { id: id },
+    });
     return response.data;
   } catch (error) {
     console.error(`Error when getting Account with id ${id}:`, error);
-    //throw error;
     return null;
   }
 };
+
 
 export const getAccountByPhone = async (phone) => {
   try {

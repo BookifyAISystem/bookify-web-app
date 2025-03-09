@@ -19,6 +19,7 @@ import BookDetail from "../components/BookDetail/BookDetail";
 import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
 import NotePage from "../pages/StaffPage/NotePage";
 import CategoryPage from "../pages/StaffPage/CategoryPage";
+import ProfileView from "../components/Profile/Profile";
 
 const RoutePath = () => {
   return (
@@ -28,6 +29,7 @@ const RoutePath = () => {
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
           <Route path="book/:id" element={<BookDetail />} /> 
+          <Route path="profile/:id" element={<ProfileView />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
