@@ -1,31 +1,64 @@
-.container {
-    max-width: 1200px; /* Giới hạn chiều rộng tối đa */
-    margin: 0 auto; /* Căn giữa */
-  }
-  
-  .book-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 cột mỗi hàng */
-    gap: 10px; /* Khoảng cách giữa các card */
-    padding: 20px 0; /* Khoảng cách trên dưới */
-    background: #f8f8f8;
-  }
-  
-  @media (max-width: 1200px) {
-    .book-grid {
-      grid-template-columns: repeat(4, 1fr); /* 4 cột trên màn hình nhỏ hơn */
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .book-grid {
-      grid-template-columns: repeat(2, 1fr); /* 2 cột trên màn hình nhỏ hơn */
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .book-grid {
-      grid-template-columns: repeat(1, 1fr); /* 1 cột trên màn hình rất nhỏ */
-    }
-  }
-  
+/* Container bọc bên ngoài toàn bộ slider */
+.book-list-container {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề của danh sách sách */
+.section-title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #e63946;
+}
+
+/* Container bao quanh toàn bộ Swiper */
+.book-slider-container {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Căn chỉnh khoảng cách giữa các card trong Swiper */
+.swiper-container {
+  padding: 0px;
+  gap: 5px;
+}
+
+/* Căn giữa các card trong Swiper */
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto !important;
+  padding: 0 2px;
+}
+
+/* Định dạng điểm phân trang của Swiper */
+.swiper-pagination-bullet {
+  background-color: #e63946;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+/* Nút điều hướng của Swiper */
+.swiper-button-next, .swiper-button-prev {
+  color: #e63946;
+  transition: color 0.2s ease;
+}
+
+.swiper-button-next:hover, .swiper-button-prev:hover {
+  color: #c82333;
+}
