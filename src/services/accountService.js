@@ -42,14 +42,16 @@ export const getAllAccounts = async (page = 1, pageSize = 10) => {
 
 export const getAccountById = async (id) => {
   try {
-    const response = await api.get(`${ACCOUNT_ENDPOINT}/${id}`);
+    const response = await api.get(`/account/getAccont`, {
+      params: { id: id },
+    });
     return response.data;
   } catch (error) {
     console.error(`Error when getting Account with id ${id}:`, error);
-    //throw error;
     return null;
   }
 };
+
 
 export const getAccountByPhone = async (phone) => {
   try {
@@ -134,6 +136,36 @@ export const login = async (account) => {
     return null;
   }
 };
+
+export const loginWithGoogle = async (googleToken) => {
+  try {
+    const response = await api.post(`${AUTHEN_ENDPOINT}/google`, { token: googleToken });
+
+    if (response.status === 200) {
+      const token = response.data.token;
+      console.log("Google Login Token:", token);
+
+      // Decode token
+      const userInfo = decodeToken(token);
+
+      if (userInfo) {
+        console.log("Google User Info:", userInfo);
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      }
+
+      return userInfo["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    } else {
+      console.error("Google Login failed:", response.data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error when logging in with Google:", error);
+    return null;
+  }
+};
+
+
 
 export const register = async (account) => {
   try {

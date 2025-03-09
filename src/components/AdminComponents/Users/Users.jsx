@@ -7,20 +7,20 @@ import { getAllAccounts, updateAccount } from "../../../services/accountService"
 import { getRoleById } from "../../../services/roleService";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 90 },
+  { field: "id", headerName: "ID", width: 50 },
   {
     field: "img",
     headerName: "Avatar",
-    width: 100,
+    width: 70,
     renderCell: (params) => <img src={params.row.img || "/noavatar.png"} alt="" />,
   },
-  { field: "displayName", headerName: "Name", width: 150 },
+  { field: "displayName", headerName: "Họ và Tên", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
-  { field: "phone", headerName: "Phone", width: 150 },
-  { field: "createdDate", headerName: "Created Date", width: 150 },
-  { field: "lastEdited", headerName: "Last Edited", width: 150 },
-  { field: "roleId", headerName: "Role", width: 150 },
-  { field: "status", headerName: "Status", width: 100 },
+  { field: "phone", headerName: "SĐT", width: 100 },
+  { field: "createdDate", headerName: "Ngày tạo", width: 150 },
+  { field: "lastEdited", headerName: "Chỉnh sửa gần đây", width: 150 },
+  { field: "roleId", headerName: "Vai trò", width: 100 },
+  { field: "status", headerName: "Trạng thái", width: 100 },
 ];
 
 const Users = () => {
@@ -92,7 +92,7 @@ const Users = () => {
   return (
     <div className="users">
       <div className="info">
-        <h1>Users</h1>
+        <h1>Người dùng</h1>
       </div>
 
       <div className="dataTable">
@@ -101,7 +101,7 @@ const Users = () => {
           rows={users}
           columns={[...columns, {
             field: "action",
-            headerName: "Action",
+            headerName: "Hành động",
             width: 150,
             renderCell: (params) => (
               <div className="action">
