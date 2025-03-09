@@ -33,8 +33,8 @@ import {
   AccountCircle
 } from '@mui/icons-material';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import ProfileTab from '../AdminLayout/navbar/ProfileTab';
-import SettingTab from '../AdminLayout/navbar/SettingTab';
+import ProfileTab from '../Header/ProfileTab';
+import SettingTab from '../Header/SettingTab';
 
 // Styled components
 const Search = styled('div')(({ theme }) => ({
