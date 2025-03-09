@@ -1,53 +1,42 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom"; // Thêm để hỗ trợ điều hướng
-import "./BookInforCard.css"; // Import file CSS cho thẻ sách
+import { useNavigate } from "react-router-dom";
+import "./BookInforCard.css";
 
 const BookInforCard = ({ book }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/book/${book.book_id}`); // Điều hướng đến trang chi tiết sách
+    navigate(`/book/${book.bookId}`);
   };
 
   return (
-    <div
-      className="book-card"
-      onClick={handleClick}
-      style={{ cursor: "pointer" }}
-    >
-      <img src={book.book_image} alt={book.book_name} className="book-image" />
-      <h3 className="book-title">{book.book_name}</h3>
-      <div className="book-price-section">
-        <span className="book-original-price">
-          {book.price.toLocaleString()} VND
-        </span>
-        {book.price_ebook && (
-          <span className="book-price">
-            {book.price_ebook.toLocaleString()} VND
-          </span>
-        )}
+    <div className="book-card" onClick={handleClick}>
+      <div className="book-image-wrapper">
+        <img src={book.bookImage} alt={book.bookName} className="book-image" />
       </div>
-      <p className="book-description">
-        {book.description.length > 100
-          ? `${book.description.slice(0, 100)}...`
-          : book.description}
-      </p>
-      <p className="book-year">Năm xuất bản: {book.pulish_year}</p>
+      <h3 className="book-title">{book.bookName}</h3>
+      <div className="book-price-section">
+        <span className="book-price">{book.price.toLocaleString()} VND</span>
+      </div>
+      <div className="button-group">
+        <button className="cart-button" onClick={(e) => e.stopPropagation()}>
+          🛒
+        </button>
+        <button className="buy-button" onClick={(e) => e.stopPropagation()}>
+          Mua ngay
+        </button>
+      </div>
     </div>
   );
 };
 
 BookInforCard.propTypes = {
   book: PropTypes.shape({
-    book_id: PropTypes.number.isRequired,
-    book_name: PropTypes.string.isRequired,
-    book_image: PropTypes.string.isRequired,
-    book_type: PropTypes.string,
-    price: PropTypes.number.isRequired, // Giá gốc
-    price_ebook: PropTypes.number,       // Giá bán
-    description: PropTypes.string.isRequired,
-    pulish_year: PropTypes.number.isRequired,
+    bookId: PropTypes.number.isRequired,
+    bookName: PropTypes.string.isRequired,
+    bookImage: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
   }).isRequired,
 };
 

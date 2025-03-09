@@ -23,6 +23,15 @@ export const getBookById = async (id) => {
         return null;
     }
 };
+export const getLatestBooks = async () => {
+    try {
+        const response = await api.get(`${BOOK_ENDPOINT}s/latest?count=8`);
+        return response.data;
+    } catch (error) {
+        console.error("Error when fetching latest books:", error);
+        return null;
+    }
+};
 
 export const createBook = async (book) => {
     try {

@@ -1,43 +1,54 @@
 .navbar {
-    background-color: #f8f8f8;
-    padding: 10px 0; /* Chỉnh padding để thu nhỏ chiều cao */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  .container {
-    max-width: 1200px; /* Giới hạn chiều rộng */
-    margin: 0 auto; /* Căn giữa */
-    padding: 0 15px; /* Thêm khoảng cách hai bên */
-  }
-  
-  .navbar-links {
-    list-style: none;
-    display: flex;
-    justify-content: space-around; /* Căn đều các nút */
-    padding: 0;
-    margin: 0;
-  }
-  
-  .navbar-links li {
-    display: inline-block;
-  }
-  
-  .navbar-links button {
-    background: none;
-    border: none;
-    color: #333;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  
-  .navbar-links button:hover {
-    background: #ff4d4d;
-    color: #fff;
-  }
-  
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 1600px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1600px;
+}
+
+.navbar-links li {
+  position: relative;
+}
+
+.navbar-links button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 30px;
+  font-size: 20px;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;  /* ⚠️ Khoảng cách giữa icon và text */
+}
+
+.navbar-links button:hover {
+  color: #e63946;
+  transform: scale(1.05);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  filter: invert(35%) sepia(90%) saturate(5700%) hue-rotate(-10deg) brightness(90%) contrast(120%);
+  transition: filter 0.2s ease;
+}
+
+.icon:hover {
+  filter: invert(35%) sepia(90%) saturate(5700%) hue-rotate(-10deg) brightness(80%) contrast(120%);
+}

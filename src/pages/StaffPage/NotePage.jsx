@@ -1,168 +1,315 @@
-import React, { useState, useEffect } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { 
+    Table, 
+    Card, 
+    Typography, 
+    Row, 
+    Col, 
+    Space, 
+    Button, 
+    Input,
+    Tooltip,
+    Tag,
+    message,
+    Modal
+} from 'antd';
+import { 
+    SearchOutlined, 
+    PlusOutlined, 
+    ReloadOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    FileExcelOutlined,
+    BookOutlined
+} from '@ant-design/icons';
 import { getAllNotes, createNote, updateNote, deleteNote } from "../../services/noteService";
-import { Edit, Delete } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
+import moment from 'moment';
+
+const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const NotePage = () => {
     const [notes, setNotes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [selectedNote, setSelectedNote] = useState(null);
     const [newContent, setNewContent] = useState('');
-    const [openConfirm, setOpenConfirm] = useState(false);
-    const [noteToDelete, setNoteToDelete] = useState(null);
-    const [openEdit, setOpenEdit] = useState(false);
-    const [editNote, setEditNote] = useState({ id: null, content: '', status: 0 });
+    const [editLoading, setEditLoading] = useState(false);
 
     useEffect(() => {
         fetchNotes();
     }, []);
 
     const fetchNotes = async () => {
-        const data = await getAllNotes();
+        try {
+            setLoading(true);
+            const data = await getAllNotes();
             if (data) {
-                const formattedNotes = data.map((note) => ({
-                  id: note.id || note.noteId,
-                  content: note.content,
-                  createdDate: note.createdDate ? new Date(note.createdDate) : null,
-                  lastEdited: note.lastEdited ? new Date(note.lastEdited) : null,
-                  status: note.status
+                const formattedNotes = data.map((note, index) => ({
+                    key: note.id || note.noteId,
+                    stt: index + 1,
+                    id: note.id || note.noteId,
+                    content: note.content,
+                    createdDate: moment(note.createdDate).format('DD/MM/YYYY HH:mm'),
+                    lastEdited: note.lastEdited ? moment(note.lastEdited).format('DD/MM/YYYY HH:mm') : '-',
+                    status: note.status
                 }));
-            setNotes(formattedNotes);
+                setNotes(formattedNotes);
+            }
+        } catch (error) {
+            message.error('Không thể tải danh sách ghi chú!');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const addNote = async () => {
-          if (newContent.trim()) {
-            const newNote = await createNote({ content: newContent, status: 1 });
-            if (newNote) {
-              setNotes([...notes, newNote]);
-              setNewContent('');
+    const handleAdd = async () => {
+        if (!newContent.trim()) {
+            message.warning('Vui lòng nhập nội dung ghi chú!');
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            const response = await createNote({ content: newContent, status: 1 });
+            if (response) {
+                message.success('Thêm ghi chú thành công!');
+                setIsAddModalVisible(false);
+                setNewContent('');
+                fetchNotes();
             }
-          }
-        };
-      
-        const resetContent = () => {
-          setNewContent('');
-        };
-      
-        const confirmDelete = (id) => {
-          setNoteToDelete(id);
-          setOpenConfirm(true);
-        };
-      
-        const handleDelete = async () => {
-          await deleteNote(noteToDelete);
-          setNotes(notes.filter((note) => note.id !== noteToDelete));
-          setOpenConfirm(false);
-          setNoteToDelete(null);
-        };
-      
-        const openEditModal = (note) => {
-          setEditNote({ id: note.id, content: note.content, status: note.status });
-          setOpenEdit(true);
-        };
-      
-        const handleEdit = async () => {
-          const updatedNote = await updateNote(editNote.id, { content: editNote.content, status: editNote.status });
-          if (updatedNote) {
-            setNotes(notes.map((note) => (note.id === editNote.id ? { ...note, content: editNote.content, lastEdited: new Date() } : note)));
-            setOpenEdit(false);
-            setEditNote({ id: null, content: '', status: 0 });
-          }
-        };
-      
-        const exportToExcel = () => {
-          const worksheet = XLSX.utils.json_to_sheet(notes.map(note => ({
-            ID: note.id,
-            Content: note.content,
-            'Created Date': note.createdDate ? note.createdDate.toLocaleString() : '',
-            'Last Edited': note.lastEdited ? note.lastEdited.toLocaleString() : '',
-            Status: note.status
-          })));
-          const workbook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Notes');
-          XLSX.writeFile(workbook, 'Notes.xlsx');
-        };
-      
+        } catch (error) {
+            message.error('Thêm ghi chú thất bại!');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <div style={{ padding: '24px' }}>
-          <h1 style={{ marginBottom: '16px' }}>Ghi chú</h1>
-          <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', backgroundColor: 'white', padding: '16px', borderRadius: '8px' }}>
-            <TextField
-              label="Nhập nội dung ghi chú..."
-              variant="outlined"
-              value={newContent}
-              onChange={(e) => setNewContent(e.target.value)}
-              fullWidth
-              multiline
-              inputProps={{ style: { wordWrap: 'break-word', whiteSpace: 'pre-wrap' } }}
-            />
-            <Button variant="contained" color="primary" onClick={addNote}>Thêm Ghi Chú</Button>
-            <Button variant="outlined" color="secondary" onClick={resetContent}>Reset</Button>
-            <Button variant="contained" color="secondary" onClick={exportToExcel}>Export Excel</Button>
-          </div>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ width: '5%' }}>ID</TableCell>
-                  <TableCell style={{ width: '55%', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>Content</TableCell>
-                  <TableCell style={{ width: '15%' }}>Created Date</TableCell>
-                  <TableCell style={{ width: '15%' }}>Last Edited</TableCell>
-                  <TableCell style={{ width: '10%' }}>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {notes.map((note) => (
-                  <TableRow key={note.id}>
-                    <TableCell>{note.id}</TableCell>
-                    <TableCell style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{note.content}</TableCell>
-                    <TableCell>{note.createdDate ? note.createdDate.toLocaleString() : ''}</TableCell>
-                    <TableCell>{note.lastEdited ? note.lastEdited.toLocaleString() : ''}</TableCell>
-                    <TableCell>
-                      <IconButton color="primary" onClick={() => openEditModal(note)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton color="secondary" onClick={() => confirmDelete(note.id)}>
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-    
-          <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
-            <DialogTitle>Xác nhận xóa</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Bạn có chắc chắn muốn xóa ghi chú này không?</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenConfirm(false)} color="primary">Hủy</Button>
-              <Button onClick={handleDelete} color="secondary">Xóa</Button>
-            </DialogActions>
-          </Dialog>
-    
-          <Dialog open={openEdit} onClose={() => setOpenEdit(false)} maxWidth="md" fullWidth>
-            <DialogTitle>Chỉnh sửa ghi chú</DialogTitle>
-            <DialogContent>
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={editNote.content}
-                onChange={(e) => setEditNote({ ...editNote, content: e.target.value })}
-                multiline
-                inputProps={{ style: { wordWrap: 'break-word', whiteSpace: 'pre-wrap' } }}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenEdit(false)} color="primary">Hủy</Button>
-              <Button onClick={handleEdit} color="primary">Lưu</Button>
-            </DialogActions>
-          </Dialog>
+    const handleEdit = async (values) => {
+        try {
+            setEditLoading(true);
+            const response = await updateNote(selectedNote.id, {
+                content: values.content,
+                status: selectedNote.status
+            });
+            if (response) {
+                message.success('Cập nhật ghi chú thành công!');
+                setIsEditModalVisible(false);
+                setSelectedNote(null);
+                fetchNotes();
+            }
+        } catch (error) {
+            message.error('Cập nhật ghi chú thất bại!');
+        } finally {
+            setEditLoading(false);
+        }
+    };
+
+    const handleDelete = (noteId) => {
+        Modal.confirm({
+            title: 'Xác nhận xóa',
+            content: 'Bạn có chắc chắn muốn xóa ghi chú này không?',
+            okText: 'Xóa',
+            okType: 'danger',
+            cancelText: 'Hủy',
+            onOk: async () => {
+                try {
+                    setLoading(true);
+                    await deleteNote(noteId);
+                    message.success('Xóa ghi chú thành công!');
+                    fetchNotes();
+                } catch (error) {
+                    message.error('Xóa ghi chú thất bại!');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
+    };
+
+    const handleExportToExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(
+            notes.map(({ stt, content, createdDate, lastEdited, status }) => ({
+                'STT': stt,
+                'Nội dung': content,
+                'Ngày tạo': createdDate,
+                'Chỉnh sửa lần cuối': lastEdited,
+                'Trạng thái': status === 1 ? 'Hoạt động' : 'Không hoạt động'
+            }))
+        );
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Notes');
+        XLSX.writeFile(workbook, 'Danh_sach_ghi_chu.xlsx');
+    };
+
+    const columns = [
+        {
+            title: 'STT',
+            dataIndex: 'stt',
+            width: 70,
+            align: 'center'
+        },
+        {
+            title: 'Nội dung',
+            dataIndex: 'content',
+            render: (text) => <Text>{text}</Text>
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdDate',
+            width: 180
+        },
+        {
+            title: 'Chỉnh sửa lần cuối',
+            dataIndex: 'lastEdited',
+            width: 180
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            width: 120,
+            render: (status) => (
+                <Tag color={status === 1 ? 'success' : 'error'}>
+                    {status === 1 ? 'Hoạt động' : 'Không hoạt động'}
+                </Tag>
+            )
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            width: 150,
+            render: (_, record) => (
+                <Space size="small">
+                    <Tooltip title="Chỉnh sửa">
+                        <Button 
+                            type="default" 
+                            icon={<EditOutlined />} 
+                            size="small"
+                            onClick={() => {
+                                setSelectedNote(record);
+                                setIsEditModalVisible(true);
+                            }}
+                        />
+                    </Tooltip>
+                    <Tooltip title="Xóa">
+                        <Button 
+                            danger
+                            icon={<DeleteOutlined />} 
+                            size="small"
+                            onClick={() => handleDelete(record.id)}
+                        />
+                    </Tooltip>
+                </Space>
+            )
+        }
+    ];
+
+    return (
+        <div className="note-container">
+            <Row gutter={[16, 16]}>
+                <Col span={24}>
+                    <Title level={2}>
+                        <BookOutlined /> Quản lý ghi chú
+                    </Title>
+                    <Text type="secondary">Quản lý các ghi chú trong hệ thống</Text>
+                </Col>
+
+                <Col span={24}>
+                    <Card>
+                        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
+                            <Space>
+                                <Input.Search
+                                    placeholder="Tìm kiếm ghi chú..."
+                                    allowClear
+                                    style={{ width: 250 }}
+                                    onChange={(e) => setSearchText(e.target.value)}
+                                />
+                                <Tooltip title="Làm mới">
+                                    <Button 
+                                        icon={<ReloadOutlined />} 
+                                        onClick={fetchNotes}
+                                        loading={loading}
+                                    />
+                                </Tooltip>
+                            </Space>
+                            <Space>
+                                <Button
+                                    icon={<FileExcelOutlined />}
+                                    onClick={handleExportToExcel}
+                                >
+                                    Xuất Excel
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setIsAddModalVisible(true)}
+                                >
+                                    Thêm ghi chú
+                                </Button>
+                            </Space>
+                        </div>
+
+                        <Table
+                            columns={columns}
+                            dataSource={notes.filter(note => 
+                                note.content.toLowerCase().includes(searchText.toLowerCase())
+                            )}
+                            loading={loading}
+                            rowSelection={{
+                                selectedRowKeys,
+                                onChange: setSelectedRowKeys
+                            }}
+                        />
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Add Note Modal */}
+            <Modal
+                title="Thêm ghi chú mới"
+                open={isAddModalVisible}
+                onOk={handleAdd}
+                onCancel={() => {
+                    setIsAddModalVisible(false);
+                    setNewContent('');
+                }}
+                confirmLoading={loading}
+            >
+                <TextArea
+                    rows={4}
+                    value={newContent}
+                    onChange={(e) => setNewContent(e.target.value)}
+                    placeholder="Nhập nội dung ghi chú..."
+                />
+            </Modal>
+
+            {/* Edit Note Modal */}
+            <Modal
+                title="Chỉnh sửa ghi chú"
+                open={isEditModalVisible}
+                onOk={() => handleEdit(selectedNote)}
+                onCancel={() => {
+                    setIsEditModalVisible(false);
+                    setSelectedNote(null);
+                }}
+                confirmLoading={editLoading}
+            >
+                <TextArea
+                    rows={4}
+                    value={selectedNote?.content}
+                    onChange={(e) => setSelectedNote({
+                        ...selectedNote,
+                        content: e.target.value
+                    })}
+                    placeholder="Nhập nội dung ghi chú..."
+                />
+            </Modal>
         </div>
-  )
-}
+    );
+};
 
-export default NotePage
+export default NotePage;

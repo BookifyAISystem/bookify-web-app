@@ -35,14 +35,16 @@ export const createVoucher = async (voucher) => {
     }
 };
 
-export const updateVoucher = async (id, voucher) => {
+export const updateVoucher = async (voucherId, voucherData) => {
     try {
-        const response = await api.put(`${VOUCHER_ENDPOINT}/${id}`, voucher);
-        return response.data;
+        const response = await api.put(`${VOUCHER_ENDPOINT}/${voucherId}`, voucherData);
+        if (response.data) {
+            return response.data;
+        }
+        throw new Error('Failed to update voucher');
     } catch (error) {
-        console.error(`Error when updating Voucher with id ${id}:`, error);
-        //throw error;
-        return null;
+        console.error('Error updating voucher:', error);
+        throw error; // Re-throw the error to handle it in the component
     }
 };
 
