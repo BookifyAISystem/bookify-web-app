@@ -1,0 +1,52 @@
+.note-admin {
+    padding: 24px;
+
+    .note-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+        .ant-card-body {
+            padding: 24px;
+        }
+    }
+
+    .table-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .note-content {
+        max-width: 500px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ant-table {
+        .ant-table-thead > tr > th {
+            background: #fafafa;
+            font-weight: 600;
+        }
+
+        .ant-table-tbody > tr:hover {
+            .ant-space {
+                visibility: visible;
+            }
+        }
+
+        .ant-space {
+            visibility: hidden;
+        }
+    }
+
+    .ant-modal-body {
+        padding: 24px;
+
+        .ant-input {
+            margin-top: 8px;
+        }
+    }
+}
