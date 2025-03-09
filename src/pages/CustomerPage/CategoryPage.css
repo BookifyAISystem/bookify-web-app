@@ -4,29 +4,29 @@
 }
 
 .category-title {
-  font-size: 28px; /* Tăng kích thước chữ tiêu đề */
+  font-size: 28px;
   color: #e63946;
-  margin-bottom: 30px; /* Tăng khoảng cách dưới tiêu đề */
+  margin-bottom: 30px;
 }
 
 .category-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20px; /* Tăng khoảng cách giữa các ô */
-  padding: 0 20px; /* Thêm padding để các ô không sát lề */
+  gap: 20px;
+  padding: 0 20px;
 }
 
 .category-button {
   background-color: #fff;
   border: 2px solid #e63946;
   color: #e63946;
-  padding: 10px 20px; /* Tăng kích thước ô */
-  border-radius: 8px; /* Bo góc mượt hơn */
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 18px; /* Tăng kích thước chữ trong ô */
+  font-size: 18px;
   transition: all 0.3s ease;
-  min-width: 150px; /* Đảm bảo các ô có chiều rộng tối thiểu để không quá nhỏ */
+  min-width: 150px;
 }
 
 .category-button:hover {
