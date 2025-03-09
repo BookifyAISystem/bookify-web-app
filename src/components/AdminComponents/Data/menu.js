@@ -1,17 +1,17 @@
 const menu = [
     {
       id: 1,
-      title: "main",
+      title: "Dashboard",
       listItems: [
         {
           id: 1,
-          title: "Homepage",
+          title: "Trang chủ",
           url: "/admin",
           icon: "/home.svg",
         },
         {
           id: 2,
-          title: "Profile",
+          title: "Thông tin cá nhân",
           url: "/admin/users/1",
           icon: "/user.svg",
         },
@@ -19,35 +19,35 @@ const menu = [
     },
     {
       id: 2,
-      title: "lists",
+      title: "Danh sách",
       listItems: [
         {
           id: 1,
-          title: "Users",
+          title: "Người dùng",
           url: "/admin/users",
           icon: "/user.svg",
         },
         {
           id: 2,
-          title: "Books",
+          title: "Kho sách",
           url: "/admin/books",
           icon: "/product.svg",
         },
         {
           id: 3,
-          title: "Orders",
+          title: "Đơn hàng",
           url: "/admin/orders",
           icon: "/order.svg",
         },
         {
           id: 4,
-          title: "Roles",
+          title: "Vai trò",
           url: "/admin/roles",
           icon: "/setting.svg",
         },
         {
           id: 5,
-          title: "Posts",
+          title: "Bài đăng",
           url: "/admin/posts",
           icon: "/post2.svg",
         },
@@ -55,7 +55,7 @@ const menu = [
     },
     {
       id: 3,
-      title: "general",
+      title: "Tổng quan",
       listItems: [
         // {
         //   id: 1,
@@ -65,7 +65,7 @@ const menu = [
         // },
         {
           id: 2,
-          title: "Notes",
+          title: "Ghi chú",
           url: "/admin/notes",
           icon: "/note.svg",
         },
@@ -77,7 +77,7 @@ const menu = [
         // },
         {
           id: 4,
-          title: "Calendar",
+          title: "Lịch",
           url: "/",
           icon: "/calendar.svg",
         },
@@ -85,11 +85,11 @@ const menu = [
     },
     {
       id: 4,
-      title: "Maintenance",
+      title: "Bảo trì",
       listItems: [
         {
           id: 1,
-          title: "Settings",
+          title: "Cài đặt",
           url: "/",
           icon: "/setting.svg",
         },

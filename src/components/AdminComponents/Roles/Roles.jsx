@@ -8,22 +8,22 @@ import PropTypes from "prop-types";
 
 const columns = [
   { field: 'roleId', headerName: 'ID', width: 70, type: 'number' },
-  { field: 'roleName', headerName: 'Role name', width: 150, type: 'string' },
+  { field: 'roleName', headerName: 'Tên vai trò', width: 150, type: 'string' },
   {
     field: 'createdDate',
-    headerName: 'Created date',
+    headerName: 'Ngày tạo',
     width: 200,
     type: 'dateTime',
   },
   {
     field: 'lastEdited',
-    headerName: 'Last edited',
+    headerName: 'Chỉnh sửa gần đây',
     width: 200,
     type: 'dateTime',
   },
   {
     field: 'status',
-    headerName: 'Status',
+    headerName: 'Trạng thái',
     width: 100,
     type: 'number',
   },
@@ -103,7 +103,7 @@ const Roles = () => {
 
   const actionColumn = {
     field: "action",
-    headerName: "Action",
+    headerName: "Hành động",
     width: 150,
     renderCell: (params) => {
       return (

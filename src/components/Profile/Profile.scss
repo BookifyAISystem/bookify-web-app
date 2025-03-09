@@ -1,0 +1,45 @@
+.profile-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar-card {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.avatar-wrapper {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.display-name {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.vertical-tabs .ant-tabs-nav {
+  width: 100%;
+}
+
+.profile-card {
+  flex-grow: 1;
+
+}
+
+.profile-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.profile-actions-right {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end; // Đẩy nút qua phải
+  gap: 10px;
+}
