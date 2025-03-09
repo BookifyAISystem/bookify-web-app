@@ -69,7 +69,7 @@ const StaffSideBar = ({ collapsed }) => {
             <div className="sidebar-header">
                 {!collapsed && (
                     <Title level={4} style={{ margin: '16px 0', color: token.colorPrimary }}>
-                        BookStore
+                        Bookify
                     </Title>
                 )}
                 {collapsed && (

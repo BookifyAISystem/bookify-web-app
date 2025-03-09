@@ -19,6 +19,8 @@ import BookDetail from "../components/BookDetail/BookDetail";
 import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
 import NotePage from "../pages/StaffPage/NotePage";
 import CategoryPage from "../pages/StaffPage/CategoryPage";
+import AuthorPage from "../pages/StaffPage/AuthorPage";
+import FeedBackPage from "../pages/StaffPage/FeedBackPage";
 
 const RoutePath = () => {
   return (
@@ -37,6 +39,8 @@ const RoutePath = () => {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="note" element={<NotePage />} />
           <Route path="category" element={<CategoryPage />} />
+          <Route path="author" element={<AuthorPage />} />
+          <Route path="feedback" element={<FeedBackPage />} />
         </Route>
         
         <Route path="/admin" element={<AdminLayout />}>

@@ -16,7 +16,8 @@ import {
     DatePicker,
     Select,
     Tooltip,
-    Badge
+    Badge,
+    message
 } from 'antd';
 import { 
     SearchOutlined, 
@@ -31,8 +32,9 @@ import {
     DownOutlined
 } from '@ant-design/icons';
 import '../StaffPage/BookWareHousePage.css'; // Create this file for custom styles
-import { getAllBooks, deleteBook } from '../../services/bookService';
+import { getAllBooks, deleteBook, createBook } from '../../services/bookService';
 import { getAllBookCategories } from '../../services/bookCategoryService';
+import AddBookModal from '../../components/StaffComponent/AddBookModal';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -53,6 +55,8 @@ const BookWareHousePage = () => {
         category: 'all',
         status: 'all'
     });
+    const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+    const [addLoading, setAddLoading] = useState(false);
 
     useEffect(() => {
         fetchBooks();
@@ -123,6 +127,25 @@ const BookWareHousePage = () => {
             console.error('Error deleting book:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleAddBook = async (values) => {
+        try {
+            setAddLoading(true);
+            const response = await createBook(values);
+            if (response) {
+                message.success('Thêm sách mới thành công!');
+                setIsAddModalVisible(false);
+                fetchBooks(); // Refresh the book list
+            } else {
+                message.error('Thêm sách thất bại!');
+            }
+        } catch (error) {
+            console.error('Error adding new book:', error);
+            message.error('Thêm sách thất bại!');
+        } finally {
+            setAddLoading(false);
         }
     };
 
@@ -243,7 +266,7 @@ const BookWareHousePage = () => {
                     <Text type="secondary">Quản lý thông tin và tình trạng sách trong hệ thống</Text>
                 </Col>
 
-                <Col span={24}>
+                {/* <Col span={24}>
                     <Row gutter={[16, 16]}>
                         <Col xs={24} sm={12} md={6}>
                             <Card>
@@ -266,7 +289,7 @@ const BookWareHousePage = () => {
                             </Card>
                         </Col>
                     </Row>
-                </Col>
+                </Col> */}
 
                 <Col span={24}>
                     <Card className="table-card">
@@ -312,6 +335,7 @@ const BookWareHousePage = () => {
                                     type="primary" 
                                     icon={<PlusOutlined />} 
                                     className="add-button"
+                                    onClick={() => setIsAddModalVisible(true)}
                                 >
                                     Thêm sách mới
                                 </Button>
@@ -339,6 +363,13 @@ const BookWareHousePage = () => {
                     </Card>
                 </Col>
             </Row>
+            <AddBookModal
+                visible={isAddModalVisible}
+                onCancel={() => setIsAddModalVisible(false)}
+                onSubmit={handleAddBook}
+                loading={addLoading}
+                categories={categories}
+            />
         </div>
     );
 };
