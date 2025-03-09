@@ -9,24 +9,24 @@ import PropTypes from "prop-types";
 import { getAllBooks } from '../../../services/bookService';
 
 const columns = [
-  { field: "id", headerName: "ID", width: 90 },
+  { field: "id", headerName: "ID", width: 50 },
   {
     field: "img",
-    headerName: "Cover",
-    width: 100,
+    headerName: "Bìa sách",
+    width: 80,
     renderCell: (params) => {
       return <img src={params.row.img} alt="" />;
     },
   },
-  { field: "bookName", headerName: "Book Name", width: 150 },
-  { field: "bookType", headerName: "Book Type", width: 100 },
-  { field: "price", headerName: "Price", width: 100 },
-  { field: "priceEbook", headerName: "Price EBook", width: 100 },
-  { field: "publishYear", headerName: "Publish Year", width: 100 },
-  { field: "categoryId", headerName: "Category", width: 100 },
-  { field: "authorId", headerName: "Author", width: 100 },
-  { field: "createdDate", headerName: "Created Date", width: 150 },
-  { field: "lastEdited", headerName: "Last Edited", width: 150 },
+  { field: "bookName", headerName: "Tên sách", width: 150 },
+  { field: "bookType", headerName: "Loại sách", width: 100 },
+  { field: "price", headerName: "Giá sách", width: 100 },
+  { field: "priceEbook", headerName: "Giá EBook", width: 100 },
+  { field: "publishYear", headerName: "Năm phát hành", width: 100 },
+  { field: "categoryId", headerName: "Thể loại", width: 100 },
+  { field: "authorId", headerName: "Tác giả", width: 100 },
+  { field: "createdDate", headerName: "Ngày thêm", width: 150 },
+  { field: "lastEdited", headerName: "Chỉnh sửa gần đây", width: 150 },
   
 ];
 
@@ -87,7 +87,7 @@ const Books = () => {
                   rows={books}
                   columns={[...columns, {
                     field: "action",
-                    headerName: "Action",
+                    headerName: "Hành động",
                     width: 100,
                     renderCell: (params) => (
                       <div className="action">

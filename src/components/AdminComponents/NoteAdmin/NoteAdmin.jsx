@@ -102,17 +102,17 @@ const NoteAdmin = () => {
         />
         <Button variant="contained" color="primary" onClick={addNote}>Thêm Ghi Chú</Button>
         <Button variant="outlined" color="secondary" onClick={resetContent}>Reset</Button>
-        <Button variant="contained" color="secondary" onClick={exportToExcel}>Export Excel</Button>
+        <Button variant="contained" color="secondary" onClick={exportToExcel}>Xuất Excel</Button>
       </div>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell style={{ width: '5%' }}>ID</TableCell>
-              <TableCell style={{ width: '55%', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>Content</TableCell>
-              <TableCell style={{ width: '15%' }}>Created Date</TableCell>
-              <TableCell style={{ width: '15%' }}>Last Edited</TableCell>
-              <TableCell style={{ width: '10%' }}>Action</TableCell>
+              <TableCell style={{ width: '55%', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>Nội dung</TableCell>
+              <TableCell style={{ width: '15%' }}>Ngày tạo</TableCell>
+              <TableCell style={{ width: '15%' }}>Chỉnh sửa gần đây</TableCell>
+              <TableCell style={{ width: '10%' }}>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
