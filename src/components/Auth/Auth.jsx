@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, TextField, Button, Tabs, Tab, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { login, decodeToken, register } from '../../services/accountService';
+import { login, decodeToken, register, loginWithGoogle } from '../../services/accountService';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import auth from "../../services/firebaseConfig";
@@ -104,26 +104,39 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      const authInstance = getAuth();
+      const result = await signInWithPopup(authInstance, provider);
+      const googleToken = await result.user.getIdToken();
   
-      if (user) {
-        const token = await user.getIdToken();
-        console.log("Firebase Token:", token);
+      console.log("Google Token:", googleToken);
   
-        await fetch("http://localhost:7088/api/authen/google", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token }),
-        });
+      const role = await loginWithGoogle(googleToken);
+  
+      if (role) {
+        alert("Đăng nhập thành công!");
+        switch (role.toLowerCase()) {
+          case "user":
+            window.location.href = "/";
+            break;
+          case "staff":
+            window.location.href = "/staff";
+            break;
+          case "admin":
+            window.location.href = "/admin";
+            break;
+          default:
+            break;
+        }
+      } else {
+        alert("Lỗi đăng nhập Google.");
       }
     } catch (error) {
-      console.error("Google login error:", error);
-      alert("Có lỗi khi đăng nhập Google!");
+      console.error("Lỗi khi đăng nhập với Google:", error);
+      alert("Có lỗi xảy ra khi đăng nhập với Google!");
     }
   };
+  
+  
   
   
   const handleRegister = async () => {
