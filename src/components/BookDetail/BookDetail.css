@@ -1,181 +1,201 @@
 .book-detail-container {
-  max-width: 1200px; 
-  margin: 0 auto; 
-
+  max-width: 1600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .book-detail {
-    display: flex;
-    gap: 5px;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    align-items: flex-start;
-  }
-  
-  .book-detail-left {
-    flex: 1 1 40%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-  }
-  
-  .book-detail-image {
-    max-width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .book-actions {
-    display: flex;
-    gap: 5px;
-    margin-top: 10px;
-    width: 100%;
-  }
-  
-  .book-actions button {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: all 0.3s ease;
-  }
-  .add-to-cart {
-    background-color: white; 
-    color: red; 
-    border: 2px solid red !important; 
-    border-radius: 4px; 
-    font-weight: bold; 
-    padding: 10px 20px; 
-    cursor: pointer;
-    display: inline-flex; 
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: all 0.3s ease; 
-  }
-  
-  .add-to-cart:hover {
-    background-color: red; 
-    color: white; 
-    border: 2px solid darkred; 
-  }
-  
-  
-  
-  
-  .buy-now {
-    background-color: red;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .buy-now:hover {
-    background-color: darkred;
-  }
-  
-  .book-policies {
-    margin-top: -10px; 
-    font-size: 14px;
-    color: #333;
-    text-align: left; 
-    width: 100%; 
-  }
-  
-  .book-policies h3 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  
-  .book-policies ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .book-policies li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2px; 
-  }
-  
-  .book-policies i {
-    color: red;
-    margin-right: 10px;
-    font-size: 18px;
-  }
-  
-  
-  .book-detail-right {
-    flex: 1 1 60%;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+  display: flex;
+  gap: 20px;
+  font-family: Arial, sans-serif;
+  align-items: flex-start;
+}
+
+.book-detail-left {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.book-detail-image {
+  max-width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.book-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.book-actions button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Nút giỏ hàng */
+.add-to-cart {
+  background-color: #fff;
+  color: #e63946;
+  border: 2px solid #e63946;
+  font-weight: bold;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background-color: #e63946;
+  color: #fff;
+}
+
+/* Nút Mua ngay */
+.buy-now {
+  background-color: #e63946;
+  color: #fff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.buy-now:hover {
+  background-color: #c82333;
+}
+
+/* Chính sách ưu đãi */
+.book-policies {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.book-policies h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.book-policies ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.book-policies li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.book-policies i {
+  color: #e63946;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Phần chi tiết bên phải */
+.book-detail-right {
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
 }
 
 .book-title {
-    font-size: 26px; 
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 2px;  
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.book-price-section {
+  margin-bottom: 15px;
 }
 
 .book-price {
-    font-size: 22px; 
-    font-weight: bold;
-    color: red;
-    margin-bottom: -15px; 
+  font-size: 22px;
+  font-weight: bold;
+  color: #e63946;
+  margin-bottom: 5px;
+}
+
+.book-ebook-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e90ff;
+  margin-bottom: 10px;
 }
 
 .book-original-price {
-    font-size: 18px; /* Tăng kích thước giá gốc */
-    text-decoration: line-through;
-    color: #888;
-    margin-bottom: 5px; /* Khoảng cách dưới giá gốc */
+  font-size: 18px;
+  text-decoration: line-through;
+  color: #888;
+  margin-bottom: 10px;
 }
 
-.book-description h3,
+.book-description h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.book-description p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  text-align: justify;
+  margin-bottom: 20px;
+  white-space: normal;  
+  overflow: visible;     
+  text-overflow: clip;   
+  max-width: 100%;     
+}
+
 .book-specifications h3 {
-    font-size: 20px; /* Tăng kích thước tiêu đề phụ */
-    margin-bottom: -15px;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.book-description p,
 .book-specifications table {
-    font-size: 16px; 
-    line-height: 1.5;
-    color: #555;
-}
-
-/* Bảng chi tiết */
-.book-specifications table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 5px; 
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 1px solid #ddd;
 }
 
 .book-specifications th,
 .book-specifications td {
-    margin-top: 10px;
-    padding: 4px 15px; /* Tăng padding một chút để dễ nhìn hơn */
-    text-align: left;
+  font-size: 16px;
+  padding: 10px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .book-specifications th {
-    background-color: #f1f1f1;
-    color: #555;
-    font-size: 16px;
+  background-color: #f5f5f5;
+  color: #555;
 }
-
-.book-specifications td {
-    font-size: 16px;
-}
-
-  

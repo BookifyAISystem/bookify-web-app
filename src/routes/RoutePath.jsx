@@ -20,6 +20,7 @@ import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
 import NotePage from "../pages/StaffPage/NotePage";
 import CategoryPage from "../pages/StaffPage/CategoryPage";
 import ProfileView from "../components/Profile/Profile";
+import CategoryCustomer from "../pages/CustomerPage/Category";  
 
 const RoutePath = () => {
   return (
@@ -30,6 +31,7 @@ const RoutePath = () => {
           <Route path="login" element={<Auth />} />
           <Route path="book/:id" element={<BookDetail />} /> 
           <Route path="profile/:id" element={<ProfileView />} />
+          <Route path="category" element={<CategoryCustomer />} />  
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
@@ -52,8 +54,7 @@ const RoutePath = () => {
           <Route path="notes" element={<NoteAdmin />} />
         </Route>
 
-        
-        <Route path="*" element={<ErrorPage />} /> {/* Route cho trang lỗi */}
+        <Route path="*" element={<ErrorPage />} /> 
       </Routes>
     </BrowserRouter>
   );
