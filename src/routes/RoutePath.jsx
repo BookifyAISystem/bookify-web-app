@@ -18,8 +18,8 @@ import Roles from "../components/AdminComponents/Roles/Roles";
 import BookDetail from "../components/BookDetail/BookDetail";
 import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
 import NotePage from "../pages/StaffPage/NotePage";
-import CategoryPage from "../pages/CustomerPage/Category";  
-
+import CategoryPage from "../pages/CustomerPage/Category";
+import BookStore from "../components/BookStore/BookStore";  
 const RoutePath = () => {
   return (
     <BrowserRouter>
@@ -28,7 +28,8 @@ const RoutePath = () => {
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
           <Route path="book/:id" element={<BookDetail />} />
-          <Route path="category" element={<CategoryPage />} />  
+          <Route path="category" element={<CategoryPage />} />
+          <Route path="bookstore" element={<BookStore />} /> 
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
