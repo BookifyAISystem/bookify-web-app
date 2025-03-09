@@ -18,7 +18,7 @@ import Roles from "../components/AdminComponents/Roles/Roles";
 import BookDetail from "../components/BookDetail/BookDetail";
 import NoteAdmin from "../components/AdminComponents/NoteAdmin/NoteAdmin";
 import NotePage from "../pages/StaffPage/NotePage";
-import CategoryPage from "../pages/StaffPage/CategoryPage";
+import CategoryPage from "../pages/CustomerPage/Category";  
 
 const RoutePath = () => {
   return (
@@ -27,7 +27,8 @@ const RoutePath = () => {
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
-          <Route path="book/:id" element={<BookDetail />} /> 
+          <Route path="book/:id" element={<BookDetail />} />
+          <Route path="category" element={<CategoryPage />} />  
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
@@ -50,8 +51,7 @@ const RoutePath = () => {
           <Route path="notes" element={<NoteAdmin />} />
         </Route>
 
-        
-        <Route path="*" element={<ErrorPage />} /> {/* Route cho trang lỗi */}
+        <Route path="*" element={<ErrorPage />} /> 
       </Routes>
     </BrowserRouter>
   );

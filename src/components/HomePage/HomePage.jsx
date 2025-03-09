@@ -7,7 +7,7 @@ const HomePage = () => {
   return (
     <div>
       <Navbar />
-      <Banner /> {/* Gọi Banner */}
+      <Banner /> 
       <BookInforGridRender />
     </div>
   );
