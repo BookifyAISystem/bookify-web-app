@@ -34,7 +34,7 @@ import {
 import '../StaffPage/BookWareHousePage.css'; // Create this file for custom styles
 import { getAllBooks, deleteBook, createBook } from '../../services/bookService';
 import { getAllBookCategories } from '../../services/bookCategoryService';
-import AddBookModal from '../../components/StaffComponent/AddBookModal';
+import AddBookModal from '../../components/StaffComponent/AddBookModalStaff';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -133,17 +133,28 @@ const BookWareHousePage = () => {
     const handleAddBook = async (values) => {
         try {
             setAddLoading(true);
-            const response = await createBook(values);
+            const formattedBook = {
+                title: values.title,
+                description: values.description,
+                author: values.author,
+                categoryId: values.categoryId,
+                publishDate: values.publishDate.format('YYYY-MM-DD'),
+                price: values.price,
+                ebookPrice: values.ebookPrice,
+                stockQuantity: values.stockQuantity,
+                image: values.image?.[0]?.originFileObj, // Handle image upload
+                status: 'Available',
+            };
+
+            const response = await createBook(formattedBook);
             if (response) {
                 message.success('Thêm sách mới thành công!');
                 setIsAddModalVisible(false);
-                fetchBooks(); // Refresh the book list
-            } else {
-                message.error('Thêm sách thất bại!');
+                await fetchBooks(); // Refresh the book list
             }
         } catch (error) {
             console.error('Error adding new book:', error);
-            message.error('Thêm sách thất bại!');
+            message.error(error.response?.data?.message || 'Thêm sách thất bại!');
         } finally {
             setAddLoading(false);
         }

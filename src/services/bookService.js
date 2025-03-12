@@ -33,14 +33,28 @@ export const getLatestBooks = async () => {
     }
 };
 
-export const createBook = async (book) => {
+export const createBook = async (bookData) => {
     try {
-        const response = await api.post(BOOK_ENDPOINT, book);
+        const formData = new FormData();
+        
+        // Append book data
+        Object.keys(bookData).forEach(key => {
+            if (key === 'image') {
+                formData.append('image', bookData.image);
+            } else {
+                formData.append(key, bookData[key]);
+            }
+        });
+
+        const response = await api.post(BOOK_ENDPOINT, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     } catch (error) {
         console.error("Error when creating a book:", error);
-        //throw error;
-        return null;
+        throw error;
     }
 };
 
