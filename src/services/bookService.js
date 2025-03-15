@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const BOOK_ENDPOINT = "/book";
+const BOOK_ENDPOINT = "/books";
 
 export const getAllBooks = async () => {
     try {
