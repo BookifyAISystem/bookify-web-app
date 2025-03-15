@@ -1,10 +1,10 @@
 import api from "./apiService";
 
-const BOOK_ENDPOINT = "/book";
+const BOOK_ENDPOINT = "/books";
 
 export const getAllBooks = async () => {
     try {
-        const response = await api.get(BOOK_ENDPOINT+'s');
+        const response = await api.get(BOOK_ENDPOINT);
         return response.data;
     } catch (error) {
         console.error("Error when fetching all books:", error);

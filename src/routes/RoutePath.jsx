@@ -24,6 +24,7 @@ import FeedBackPage from "../pages/StaffPage/FeedBackPage";
 import ProfileView from "../components/Profile/Profile";
 import CategoryCustomer from "../pages/CustomerPage/Category";  
 import BookStore from "../components/BookStore/BookStore";  
+import ShoppingCart from '../pages/CustomerPage/ShoppingCart';
 
 const RoutePath = () => {
   return (
@@ -36,6 +37,7 @@ const RoutePath = () => {
           <Route path="profile/:id" element={<ProfileView />} />
           <Route path="category" element={<CategoryCustomer />} />  
           <Route path="bookstore" element={<BookStore />} /> 
+          <Route path="/shopping-cart" element={<ShoppingCart />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
