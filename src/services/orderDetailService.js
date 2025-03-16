@@ -67,3 +67,12 @@ export const changeStatus = async (id, status) => {
         return null;
     }
 };
+export const getOrderDetailsByOrderId = async (orderId) => {
+    try {
+        const response = await api.get(`${ORDER_DETAIL_ENDPOINT }/${orderId}`);
+        return response.data.orderDetails || []; 
+    } catch (error) {
+        console.error(`❌ Lỗi khi lấy OrderDetails theo orderId ${orderId}:`, error);
+        return [];
+    }
+};

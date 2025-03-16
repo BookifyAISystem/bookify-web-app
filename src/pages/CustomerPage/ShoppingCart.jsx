@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllOrderDetails } from "../../services/orderDetailService";
+import { getAllOrderDetails, deleteOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import deleteIcon from "../../assets/icon/delete.svg";
 import "./ShoppingCart.css";
@@ -11,8 +11,10 @@ const ShoppingCart = () => {
 
     useEffect(() => {
         const fetchCartData = async () => {
+            // Lấy dữ liệu từ localStorage để hiển thị sản phẩm từ BookInforCard
+            const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+            
             const orderDetails = await getAllOrderDetails();
-
             if (orderDetails) {
                 const validOrders = orderDetails.filter(order => order.status === 1);
 
@@ -31,7 +33,10 @@ const ShoppingCart = () => {
                             : null;
                     })
                 );
-                setCartItems(itemsWithBookDetails.filter(item => item !== null));
+
+                // Gộp dữ liệu từ API và localStorage
+                const combinedItems = [...storedCart, ...itemsWithBookDetails.filter(item => item !== null)];
+                setCartItems(combinedItems);
             }
         };
 
@@ -44,7 +49,7 @@ const ShoppingCart = () => {
     // Xử lý tích chọn sản phẩm
     const handleSelectItem = (item) => {
         let updatedSelectedItems;
-    
+
         if (selectedItems.some(selected => selected.id === item.id)) {
             updatedSelectedItems = selectedItems.filter(selected => selected.id !== item.id);
         } else {
@@ -65,10 +70,14 @@ const ShoppingCart = () => {
     };
 
     // Xử lý thay đổi số lượng sản phẩm
-    const handleQuantityChange = (item, type) => {
+    const handleQuantityChange = async (item, type) => {
         const updatedCart = cartItems.map(cartItem => {
             if (cartItem.id === item.id) {
                 const newQuantity = type === "increase" ? cartItem.quantity + 1 : Math.max(1, cartItem.quantity - 1);
+                
+                // Gọi API cập nhật số lượng trong OrderDetailService
+                updateOrderDetail(cartItem.id, { ...cartItem, quantity: newQuantity });
+
                 return { ...cartItem, quantity: newQuantity };
             }
             return cartItem;
@@ -87,6 +96,16 @@ const ShoppingCart = () => {
             });
             setSelectedItems(updatedSelected);
         }
+    };
+
+    // Xóa sản phẩm khỏi giỏ hàng
+    const handleDeleteItem = async (item) => {
+        await deleteOrderDetail(item.id);
+        const updatedCart = cartItems.filter(cartItem => cartItem.id !== item.id);
+        setCartItems(updatedCart);
+
+        // Cập nhật localStorage
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
 
     return (
@@ -135,7 +154,7 @@ const ShoppingCart = () => {
                                 <p className="total-price">{(item.price * item.quantity).toLocaleString()} đ</p>
                             </div>
                             <div className="column delete-column">
-                                <button className="delete-button">
+                                <button className="delete-button" onClick={() => handleDeleteItem(item)}>
                                     <img src={deleteIcon} alt="Xóa" className="delete-icon" />
                                 </button>
                             </div>
