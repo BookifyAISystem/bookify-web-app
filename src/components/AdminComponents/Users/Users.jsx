@@ -32,22 +32,29 @@ const Users = () => {
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const getRole = async (roleId) => {
+    const role = await getRoleById(roleId);
+    return role?.roleName || roleId;
+  };
+
   const refreshUsers = async () => {
     setLoading(true);
     try {
       const response = await getAllAccounts(page + 1, pageSize);
       if (response?.items) {
-        const mappedUsers = response.items.map(user => ({
-          id: user.accountId,
-          username: user.username,
-          displayName: user.displayName,
-          email: user.email,
-          phone: user.phone,
-          createdDate: new Date(user.createdDate),
-          lastEdited: new Date(user.lastEdited),
-          status: user.status,
-          roleId: user.roleId,
-        }));
+        const mappedUsers = await Promise.all(
+          response.items.map( async(user) => ({
+            id: user.accountId,
+            username: user.username,
+            displayName: user.displayName,
+            email: user.email,
+            phone: user.phone,
+            createdDate: new Date(user.createdDate),
+            lastEdited: new Date(user.lastEdited),
+            status: user.status,
+            roleId: await getRole(user.roleId),
+          }))
+        );
         setUsers(mappedUsers);
         setTotalCount(response.totalCount);
       }
@@ -64,17 +71,20 @@ const Users = () => {
       try {
         const response = await getAllAccounts(page + 1, pageSize);
         if (response?.items) {
-          const mappedUsers = response.items.map(user => ({
-            id: user.accountId,
-            username: user.username,
-            displayName: user.displayName,
-            email: user.email,
-            phone: user.phone,
-            createdDate: new Date(user.createdDate).toLocaleString(),
-            lastEdited: new Date(user.lastEdited).toLocaleString(),
-            status: user.status,
-            roleId: user.roleId,
-          }));
+          const mappedUsers = await Promise.all(
+            response.items.map(async (user) => ({
+              id: user.accountId,
+              username: user.username,
+              displayName: user.displayName,
+              email: user.email,
+              phone: user.phone,
+              createdDate: new Date(user.createdDate).toLocaleString(),
+              lastEdited: new Date(user.lastEdited).toLocaleString(),
+              status: user.status,
+              roleId: await getRole(user.roleId),
+            }))
+          );
+          
           setUsers(mappedUsers);
           setTotalCount(response.totalCount);
         }

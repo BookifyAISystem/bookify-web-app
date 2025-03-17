@@ -77,7 +77,7 @@ const BookDetail = () => {
 
           <div className="book-description">
             <h3>Mô tả</h3>
-            <p>{book.bookContent}</p>
+            <p>{book.description}</p>
           </div>
 
           <div className="book-specifications">
