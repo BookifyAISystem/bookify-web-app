@@ -1,6 +1,6 @@
 import api from "./apiService"; 
 
-const CATEGORY_ENDPOINT = "/category";
+const CATEGORY_ENDPOINT = "/categories";
 
 export const getAllCategories = async () => {
     try {

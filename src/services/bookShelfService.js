@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const BOOKSHELF_ENDPOINT = "/bookshelfs";
+const BOOKSHELF_ENDPOINT = "/bookshelves";
 
 export const getAllBookShelves = async () => {
     try {

@@ -7,13 +7,15 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getAllBooks } from '../../../services/bookService';
+import { getAuthorById } from '../../../services/authorService';
+import { getCategoryById } from '../../../services/categoryService';
 
 const columns = [
   { field: "id", headerName: "ID", width: 50 },
   {
     field: "img",
     headerName: "Bìa sách",
-    width: 80,
+    width: 60,
     renderCell: (params) => {
       return <img src={params.row.img} alt="" />;
     },
@@ -22,7 +24,7 @@ const columns = [
   { field: "bookType", headerName: "Loại sách", width: 100 },
   { field: "price", headerName: "Giá sách", width: 100 },
   { field: "priceEbook", headerName: "Giá EBook", width: 100 },
-  { field: "publishYear", headerName: "Năm phát hành", width: 100 },
+  { field: "publishYear", headerName: "Phát hành", width: 80 },
   { field: "categoryId", headerName: "Thể loại", width: 100 },
   { field: "authorId", headerName: "Tác giả", width: 100 },
   { field: "createdDate", headerName: "Ngày thêm", width: 150 },
@@ -39,38 +41,50 @@ const Books = () => {
   const [loading, setLoading] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   
+  const fetchAuthor = async (authorId) => {
+    const author = await getAuthorById(authorId);
+    return author?.authorName || authorId;
+  }
+
+  const fetchCategory = async (categoryId) => {
+    const category = await getCategoryById(categoryId);
+    return category?.categoryName || categoryId;
+  }
+
   useEffect(() => {
     const fetchBooks = async () => {
       setLoading(true);
       try {
         const response = await getAllBooks(page + 1, pageSize);
-        console.log(response);
         if (response?.books) {
-          const mappedBooks = response.books.map(book => ({
-            id: book.bookId,
-            bookName: book.bookName,
-            bookType: book.bookType,
-            price: book.price,
-            priceEbook: book.priceEbook,
-            publishYear: book.publishYear,
-            categoryId: book.categoryId,
-            authorId: book.authorId,
-            createdDate: new Date(book.createdDate),
-            lastEdited: new Date(book.lastEdited),
-          }));
-    
+          const mappedBooks = await Promise.all(
+            response.books.map(async (book) => ({
+              id: book.bookId,
+              img: book.bookImage,
+              bookName: book.bookName,
+              bookType: book.bookType,
+              price: book.price,
+              priceEbook: book.priceEbook,
+              publishYear: book.publishYear,
+              categoryId: await fetchCategory(book.categoryId),
+              authorId: await fetchAuthor(book.authorId),
+              createdDate: new Date(book.createdDate),
+              lastEdited: new Date(book.lastEdited),
+            }))
+          );
+  
           setBooks(mappedBooks);
-          setTotalCount(response.totalItems); // Tổng số lượng sách
+          setTotalCount(response.totalItems);
         }
       } catch (error) {
         console.error('Error fetching books:', error);
       }
       setLoading(false);
     };
-    
   
     fetchBooks();
   }, [page, pageSize]);
+  
   
   
 
@@ -116,7 +130,7 @@ const Books = () => {
                   paginationMode="server"
                   onPageChange={(newPage) => setPage(newPage)}
                   onPageSizeChange={(newSize) => setPageSize(newSize)}
-                  pageSizeOptions={[10, 20, 50]}
+                  pageSizeOptions={[10]}
                   slots={{ toolbar: GridToolbar }}
                   checkboxSelection
                   disableRowSelectionOnClick

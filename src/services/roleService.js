@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const ROLE_ENDPOINT = "/role";
+const ROLE_ENDPOINT = "/roles";
 
 export const getAllRoles = async () => {
   try {
