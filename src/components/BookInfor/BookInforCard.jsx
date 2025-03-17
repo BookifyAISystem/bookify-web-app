@@ -2,8 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { getAccountID } from "../../services/accountService"; 
-import { getAllOrders, createOrder } from "../../services/orderService"; 
-import { getOrderDetailsByOrderId, createOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
+import { createOrder } from "../../services/orderService"; 
 import "./BookInforCard.css";
 
 const BookInforCard = ({ book }) => {
@@ -23,15 +22,15 @@ const BookInforCard = ({ book }) => {
     }
 
     try {
-        console.log("🔍 Đang tìm Order theo accountId:", accountId);
+        console.log("🔍 Đang tạo đơn hàng cho accountId:", accountId);
 
-        // Dữ liệu đơn hàng theo API yêu cầu
+        // Dữ liệu đơn hàng gửi lên API
         const orderData = {
             accountId: accountId,
             voucherId: null,
             orderDetails: [
                 {
-                    bookId: book.bookId,  // ✅ Đảm bảo gửi đúng bookId
+                    bookId: book.bookId,
                     quantity: 1,
                     price: book.price
                 }
@@ -53,9 +52,7 @@ const BookInforCard = ({ book }) => {
         console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
         alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
-};
-
-
+  };
 
   return (
     <div className="book-card" onClick={handleClick}>

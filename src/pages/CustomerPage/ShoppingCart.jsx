@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getAllOrderDetails, deleteOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
+import {
+    getAllOrderDetails,
+    updateOrderDetail,
+} from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import deleteIcon from "../../assets/icon/delete.svg";
 import "./ShoppingCart.css";
@@ -9,13 +12,12 @@ const ShoppingCart = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
 
-    useEffect(() => {
-        const fetchCartData = async () => {
-            // Lấy dữ liệu từ localStorage để hiển thị sản phẩm từ BookInforCard
-            const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-            
+    // ✅ Lấy danh sách sản phẩm từ OrderDetailService (chỉ lấy status = 1)
+    const fetchCartData = async () => {
+        try {
             const orderDetails = await getAllOrderDetails();
             if (orderDetails) {
+                // Chỉ lấy các sản phẩm có status = 1
                 const validOrders = orderDetails.filter(order => order.status === 1);
 
                 const itemsWithBookDetails = await Promise.all(
@@ -23,35 +25,44 @@ const ShoppingCart = () => {
                         const book = await getBookById(order.bookId);
                         return book
                             ? {
-                                id: order.orderDetailId,
-                                bookId: order.bookId,
-                                title: book.bookName,
-                                image: book.bookImage,
-                                price: order.price,
-                                quantity: order.quantity,
-                            }
+                                  orderDetailId: order.orderDetailId,
+                                  orderId: order.orderId,
+                                  bookId: order.bookId,
+                                  title: book.bookName,
+                                  image: book.bookImage,
+                                  price: order.price,
+                                  quantity: order.quantity,
+                                  status: order.status,
+                              }
                             : null;
                     })
                 );
 
-                // Gộp dữ liệu từ API và localStorage
-                const combinedItems = [...storedCart, ...itemsWithBookDetails.filter(item => item !== null)];
-                setCartItems(combinedItems);
+                setCartItems(itemsWithBookDetails.filter(item => item !== null));
             }
-        };
+        } catch (error) {
+            console.error("❌ Lỗi khi lấy dữ liệu giỏ hàng:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCartData();
     }, []);
 
-    // Cập nhật tổng tiền của các sản phẩm đã chọn
-    const totalAmount = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // ✅ Tính tổng tiền dựa trên các sản phẩm đã chọn
+    const totalAmount = selectedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
 
-    // Xử lý tích chọn sản phẩm
+    // ✅ Xử lý chọn / bỏ chọn sản phẩm
     const handleSelectItem = (item) => {
         let updatedSelectedItems;
 
-        if (selectedItems.some(selected => selected.id === item.id)) {
-            updatedSelectedItems = selectedItems.filter(selected => selected.id !== item.id);
+        if (selectedItems.some((selected) => selected.orderDetailId === item.orderDetailId)) {
+            updatedSelectedItems = selectedItems.filter(
+                (selected) => selected.orderDetailId !== item.orderDetailId
+            );
         } else {
             updatedSelectedItems = [...selectedItems, item];
         }
@@ -59,53 +70,61 @@ const ShoppingCart = () => {
         setSelectedItems(updatedSelectedItems);
     };
 
-    // Xử lý chọn tất cả
+    // ✅ Xử lý chọn tất cả
     const handleSelectAll = () => {
         if (selectAll) {
-            setSelectedItems([]); // Bỏ tích tất cả -> Tổng tiền về 0
+            setSelectedItems([]);
         } else {
-            setSelectedItems(cartItems.map(item => ({ ...item }))); // Tạo bản sao để cập nhật số lượng đúng
+            setSelectedItems(cartItems.map((item) => ({ ...item })));
         }
         setSelectAll(!selectAll);
     };
 
-    // Xử lý thay đổi số lượng sản phẩm
+    // ✅ Xử lý cập nhật số lượng sản phẩm
     const handleQuantityChange = async (item, type) => {
-        const updatedCart = cartItems.map(cartItem => {
-            if (cartItem.id === item.id) {
-                const newQuantity = type === "increase" ? cartItem.quantity + 1 : Math.max(1, cartItem.quantity - 1);
-                
-                // Gọi API cập nhật số lượng trong OrderDetailService
-                updateOrderDetail(cartItem.id, { ...cartItem, quantity: newQuantity });
+        const newQuantity = type === "increase" ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+    
+        const updatedOrderDetail = {
+            orderDetailId: item.orderDetailId,
+            orderId: item.orderId,
+            bookId: item.bookId,
+            quantity: newQuantity,
+            price: item.price,
+            status: item.status,
+        };
 
-                return { ...cartItem, quantity: newQuantity };
+        console.log("📤 Gửi request cập nhật số lượng:", updatedOrderDetail);
+    
+        try {
+            const response = await updateOrderDetail(item.orderDetailId, updatedOrderDetail);
+            if (response === 204 || response) {
+                console.log("✅ Cập nhật UI sau khi cập nhật số lượng.");
+                fetchCartData(); // 🔄 Cập nhật giỏ hàng ngay sau khi update
             }
-            return cartItem;
-        });
-
-        setCartItems(updatedCart);
-
-        // Nếu sản phẩm đang được chọn, cập nhật lại số lượng trong `selectedItems`
-        if (selectedItems.some(selected => selected.id === item.id)) {
-            const updatedSelected = selectedItems.map(selected => {
-                if (selected.id === item.id) {
-                    const newQuantity = type === "increase" ? selected.quantity + 1 : Math.max(1, selected.quantity - 1);
-                    return { ...selected, quantity: newQuantity };
-                }
-                return selected;
-            });
-            setSelectedItems(updatedSelected);
+        } catch (error) {
+            alert("❌ Lỗi khi cập nhật số lượng sản phẩm.");
+            console.error("Lỗi cập nhật số lượng:", error);
         }
     };
 
-    // Xóa sản phẩm khỏi giỏ hàng
+    // ✅ Xóa sản phẩm (chuyển status = 0 thay vì xóa thật)
     const handleDeleteItem = async (item) => {
-        await deleteOrderDetail(item.id);
-        const updatedCart = cartItems.filter(cartItem => cartItem.id !== item.id);
-        setCartItems(updatedCart);
+        try {
+            const updatedOrderDetail = {
+                ...item,
+                status: 0, // Đánh dấu là đã xóa
+            };
 
-        // Cập nhật localStorage
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
+            const deleteResponse = await updateOrderDetail(item.orderDetailId, updatedOrderDetail);
+            if (deleteResponse) {
+                console.log("🗑 Sản phẩm đã được xóa (status = 0)");
+                fetchCartData(); // 🔄 Cập nhật giỏ hàng ngay sau khi xóa
+            } else {
+                alert("❌ Lỗi khi xóa sản phẩm.");
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa sản phẩm:", error);
+        }
     };
 
     return (
@@ -113,7 +132,7 @@ const ShoppingCart = () => {
             {/* Cột bên trái: Giỏ hàng */}
             <div className="shopping-cart">
                 <h2>🛒 GIỎ HÀNG ({cartItems.length} sản phẩm)</h2>
-                
+
                 <div className="cart-header">
                     <div className="column checkbox-column">
                         <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
@@ -128,11 +147,11 @@ const ShoppingCart = () => {
                     <p className="empty-cart">Không có sản phẩm nào trong giỏ hàng</p>
                 ) : (
                     cartItems.map((item) => (
-                        <div key={item.id} className="cart-item">
+                        <div key={item.orderDetailId} className="cart-item">
                             <div className="column checkbox-column">
-                                <input 
-                                    type="checkbox" 
-                                    checked={selectedItems.some(selected => selected.id === item.id)}
+                                <input
+                                    type="checkbox"
+                                    checked={selectedItems.some((selected) => selected.orderDetailId === item.orderDetailId)}
                                     onChange={() => handleSelectItem(item)}
                                 />
                             </div>
