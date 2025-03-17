@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { getAccountID } from "../../services/accountService"; 
-import { createOrder } from "../../services/orderService"; 
+import { getAccountID } from "../../services/accountService";
+import { createOrder, getOrderByAccount } from "../../services/orderService";
+import { getOrderDetailsByOrderId, createOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
 import "./BookInforCard.css";
 
 const BookInforCard = ({ book }) => {
@@ -17,40 +18,67 @@ const BookInforCard = ({ book }) => {
 
     const accountId = getAccountID();
     if (!accountId) {
-        alert("Vui lòng đăng nhập để thêm vào giỏ hàng.");
-        return;
+      alert("Vui lòng đăng nhập để thêm vào giỏ hàng.");
+      return;
     }
 
     try {
-        console.log("🔍 Đang tạo đơn hàng cho accountId:", accountId);
+      let order = await getOrderByAccount(accountId);
+      if (!order || !order.orderId) {
+        order = await createOrder({
+          accountId: accountId,
+          voucherId: null,
+          orderDetails: [],
+        });
 
-        // Dữ liệu đơn hàng gửi lên API
-        const orderData = {
-            accountId: accountId,
-            voucherId: null,
-            orderDetails: [
-                {
-                    bookId: book.bookId,
-                    quantity: 1,
-                    price: book.price
-                }
-            ]
-        };
-
-        console.log("📤 Gửi dữ liệu tạo order:", orderData);
-
-        const order = await createOrder(orderData);
-
-        if (!order) {
-            console.error("❌ Không thể tạo đơn hàng.");
-            alert("Không thể thêm sản phẩm vào giỏ hàng.");
-            return;
+        if (!order || !order.orderId) {
+          alert("Không thể tạo đơn hàng.");
+          return;
         }
 
-        alert("🎉 Sản phẩm đã được thêm vào giỏ hàng!");
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      let orderDetails = await getOrderDetailsByOrderId(order.orderId);
+      if (!orderDetails || orderDetails.length === 0) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        orderDetails = await getOrderDetailsByOrderId(order.orderId);
+      }
+
+      const existingItem = orderDetails.find(detail => detail.bookId === book.bookId);
+
+      if (existingItem) {
+        const updatedData = {
+          quantity: existingItem.status === 1 ? existingItem.quantity + 1 : 1,
+          price: book.price,
+          orderId: order.orderId,
+          bookId: book.bookId,
+          status: 1,
+        };
+
+        const updateResponse = await updateOrderDetail(existingItem.orderDetailId, updatedData);
+        if (!updateResponse) {
+          alert("Không thể cập nhật số lượng sản phẩm.");
+          return;
+        }
+      } else {
+        const newDetail = await createOrderDetail({
+          orderId: order.orderId,
+          bookId: book.bookId,
+          quantity: 1,
+          price: book.price,
+          status: 1,
+        });
+
+        if (!newDetail) {
+          alert("Không thể thêm sản phẩm vào giỏ hàng.");
+          return;
+        }
+      }
+
+      alert("🎉 Sản phẩm đã được thêm vào giỏ hàng!");
     } catch (error) {
-        console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
-        alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+      alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
   };
 
@@ -63,6 +91,7 @@ const BookInforCard = ({ book }) => {
       <div className="book-price-section">
         <span className="book-price">{book.price.toLocaleString()} VND</span>
       </div>
+
       <div className="button-group">
         <button className="cart-button" onClick={handleAddToCart}>
           🛒

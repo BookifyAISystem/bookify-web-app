@@ -6,7 +6,6 @@
     margin: auto;
 }
 
-/* Bên trái: Giỏ hàng */
 .shopping-cart {
     background: #f8f8f8;
     padding: 30px;
@@ -16,7 +15,6 @@
     font-size: 18px;
 }
 
-/* Bên phải: Thanh toán */
 .payment-summary {
     background: #fff;
     padding: 20px;
@@ -52,7 +50,6 @@
     font-weight: bold;
 }
 
-/* Nút thanh toán */
 .checkout-button {
     background: red;
     color: white;
@@ -71,7 +68,6 @@
     background: darkred;
 }
 
-/* Header của giỏ hàng */
 .cart-header {
     display: flex;
     justify-content: space-between;
@@ -85,7 +81,6 @@
     text-align: center;
 }
 
-/* Mỗi sản phẩm trong giỏ hàng */
 .cart-item {
     display: flex;
     justify-content: space-between;
@@ -98,14 +93,12 @@
     text-align: center;
 }
 
-/* Chia layout các cột */
 .column {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Cột checkbox - Tăng kích thước */
 .checkbox-column {
     width: 5%;
 }
@@ -115,7 +108,6 @@
     cursor: pointer;
 }
 
-/* Cột sản phẩm */
 .product-column {
     width: 40%;
     display: flex;
@@ -125,24 +117,20 @@
     text-align: left;
 }
 
-/* Cột số lượng */
 .quantity-column {
     width: 20%;
 }
 
-/* Cột giá tiền */
 .price-column {
     width: 20%;
 }
 
-/* Cột xóa */
 .delete-column {
     width: 10%;
     display: flex;
     justify-content: center;
 }
 
-/* Ảnh sách */
 .book-image {
     width: 120px;
     height: 160px;
@@ -150,7 +138,6 @@
     object-fit: cover;
 }
 
-/* Thông tin sách */
 .book-info {
     display: flex;
     flex-direction: column;
@@ -159,20 +146,17 @@
     font-weight: bold;
 }
 
-/* Tên sách */
 .book-title {
     font-size: 20px;
     margin-bottom: 5px;
 }
 
-/* Giá tiền */
 .price {
     color: red;
     font-size: 22px;
     font-weight: bold;
 }
 
-/* 🔥 Ô chỉnh số lượng - Thiết kế giống ảnh mẫu */
 .quantity-control {
     display: flex;
     justify-content: space-between;
@@ -202,7 +186,6 @@
     outline: none;
 }
 
-/* Thành tiền */
 .total-price {
     font-weight: bold;
     color: red;
@@ -210,7 +193,6 @@
     text-align: center;
 }
 
-/* 🔥 Nút xóa - Màu đỏ, đặt gần với giá tiền */
 .delete-button {
     background: none;
     border: none;
