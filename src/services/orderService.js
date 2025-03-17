@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const ORDER_ENDPOINT = "/order";
+const ORDER_ENDPOINT = "/v1/orders";
 
 export const getAllOrders = async () => {
     try {
@@ -83,13 +83,24 @@ export const getOrderByAccount = async (accountId) => {
         const response = await api.get(`${ORDER_ENDPOINT}?accountId=${accountId}`);
         const orders = response.data || [];
 
+        console.log("📦 Danh sách đơn hàng nhận từ API:", orders);
+
         if (!orders.length) return null;
 
-        return orders.find(order => order.status === 1) || null;
-    } catch {
+        // Lấy đơn hàng mới nhất có status = 1
+        const latestOrder = orders
+            .filter(order => order.status === 1)
+            .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))[0];
+
+        console.log("✅ Đơn hàng hợp lệ mới nhất:", latestOrder);
+        return latestOrder || null;
+    } catch (error) {
+        console.error(`❌ Lỗi khi lấy Order với accountId ${accountId}:`, error);
         return null;
     }
 };
+
+
 
 export const getOrderDetailsByOrderId = async (orderId) => {
     try {

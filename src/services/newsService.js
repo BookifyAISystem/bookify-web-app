@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const NEWS_ENDPOINT = "/news";
+const NEWS_ENDPOINT = "/v1/news";
 
 export const getAllNews = async () => {
     try {

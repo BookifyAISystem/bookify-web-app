@@ -1,8 +1,8 @@
 import api from "./apiService";
 import { jwtDecode } from "jwt-decode";
 
-const ACCOUNT_ENDPOINT = "/account";
-const AUTHEN_ENDPOINT = "/authen";
+const ACCOUNT_ENDPOINT = "/v1/accounts";
+const AUTHEN_ENDPOINT = "/v1/authen";
 
 
 export const decodeToken = (token) => {
@@ -51,7 +51,7 @@ export const getAllAccounts = async (page = 1, pageSize = 10) => {
 
 export const getAccountById = async (id) => {
   try {
-    const response = await api.get(`/account/getAccont`, {
+    const response = await api.get(`/accounts/getAccont`, {
       params: { id: id },
     });
     return response.data;

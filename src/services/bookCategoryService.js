@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const BOOK_CATEGORY_ENDPOINT = "/book-category";
+const BOOK_CATEGORY_ENDPOINT = "/v1/book-categories";
 
 export const getAllBookCategories = async () => {
     try {

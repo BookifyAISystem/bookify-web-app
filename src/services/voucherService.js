@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const VOUCHER_ENDPOINT = "/voucher";
+const VOUCHER_ENDPOINT = "/v1/vouchers";
 
 export const getAllVouchers = async () => {
     try {

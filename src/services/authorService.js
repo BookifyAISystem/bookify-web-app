@@ -1,11 +1,11 @@
 import api from "./apiService";
 
-const AUTHOR_ENDPOINT = "/author";
+const AUTHOR_ENDPOINT = "/v1/authors";
 
 export const getAllAuthors = async () => {
     try {
         console.log('Fetching authors from:', AUTHOR_ENDPOINT);
-        const response = await api.get(AUTHOR_ENDPOINT+'s'); // Add 's' to match API endpoint
+        const response = await api.get(AUTHOR_ENDPOINT); 
         console.log('API Response:', response);
         return response.data;
     } catch (error) {

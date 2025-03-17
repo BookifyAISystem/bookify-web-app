@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const WISHLIST_ENDPOINT = "/wishlist";
+const WISHLIST_ENDPOINT = "/v1/wishlists";
 
 export const getAllWishLists = async () => {
     try {
