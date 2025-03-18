@@ -56,7 +56,7 @@ export const deleteOrder = async (id) => {
 
 export const changeStatus = async (id, status) => {
     try {
-        const response = await api.put(`${ORDER_ENDPOINT}/${id}/status`, { status });
+        const response = await api.patch(`${ORDER_ENDPOINT}/change-status/${id}`, status);
         return response.data || null;
     } catch {
         return null;

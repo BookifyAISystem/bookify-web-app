@@ -29,6 +29,7 @@ import AuthorsPage from '../pages/CustomerPage/AuthorPage';
 import AuthorDetailPage from '../components/Author/AuthorDetailPage'
 import SupportPage from "../layouts/Footer/SupportPage";
 import ServicePage from "../layouts/Footer/ServicePage";
+import Checkout from "../pages/CustomerPage/Checkout";
 
 const RoutePath = () => {
   return (
@@ -41,7 +42,8 @@ const RoutePath = () => {
           <Route path="profile/:id" element={<ProfileView />} />
           <Route path="category" element={<CategoryCustomer />} />  
           <Route path="bookstore" element={<BookStore />} /> 
-          <Route path="/shopping-cart" element={<ShoppingCart />} />
+          <Route path="shopping-cart" element={<ShoppingCart />} />
+          <Route path="shopping-cart/:orderId" element={<Checkout />} />
           <Route path="authors" element={<AuthorsPage />} />
           <Route path="authors/:id" element={<AuthorDetailPage />} />
           <Route path="support" element={<SupportPage />} />

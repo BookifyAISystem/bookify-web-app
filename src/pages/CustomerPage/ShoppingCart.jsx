@@ -5,14 +5,16 @@ import {
 } from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import deleteIcon from "../../assets/icon/delete.svg";
-import { getOrderByAccount } from "../../services/orderService";
+import { getOrderByAccount, changeStatus } from "../../services/orderService";
 import "./ShoppingCart.css";
+import { useNavigate } from "react-router-dom";
 
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [accountId, setAccountId] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
       const token = JSON.parse(localStorage.getItem('userInfo'));
@@ -110,6 +112,28 @@ const ShoppingCart = () => {
     }
   };
 
+  const handleCheckout = async () => {
+    if (selectedItems.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      return;
+    }
+
+    try {
+      const order = await getOrderByAccount(accountId);
+      const orderId = order.orderId;
+      console.log("🛒 Đơn hàng cần thanh toán:", orderId);
+      // const response = await changeStatus(orderId, 2);
+      // if (response) {
+      navigate(`${orderId}`);
+      // } else {
+      //   alert("Lỗi khi thanh toán.");
+      // }
+    } catch (error) {
+      alert("Lỗi khi thanh toán.");
+    }
+  };
+
+
   return (
     <div className="shopping-container">
       <div className="shopping-cart">
@@ -170,7 +194,7 @@ const ShoppingCart = () => {
           <p>Tổng tiền:</p>
           <p className="total-amount">{totalAmount.toLocaleString()} đ</p>
         </div>
-        <button className="checkout-button" disabled={totalAmount === 0}>THANH TOÁN</button>
+        <button className="checkout-button" onClick={handleCheckout} disabled={totalAmount === 0}>THANH TOÁN</button>
       </div>
     </div>
   );
