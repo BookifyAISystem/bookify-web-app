@@ -80,7 +80,7 @@ export const getLatestOrderByAccount = async (accountId) => {
 
 export const getOrderByAccount = async (accountId) => {
     try {
-        const response = await api.get(`${ORDER_ENDPOINT}?accountId=${accountId}`);
+        const response = await api.get(`${ORDER_ENDPOINT}/account/${accountId}`);
         const orders = response.data || [];
 
         console.log("📦 Danh sách đơn hàng nhận từ API:", orders);
