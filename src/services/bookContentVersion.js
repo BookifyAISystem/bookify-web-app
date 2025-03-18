@@ -1,6 +1,6 @@
 import api from "./apiService"; 
 
-const BOOK_CONTENT_VERSION_ENDPOINT = "/book-content-version";
+const BOOK_CONTENT_VERSION_ENDPOINT = "/v1/book-content-version";
 
 export const getAllBookContentVersions = async () => {
     try {

@@ -70,7 +70,7 @@
   color: #fff;
 }
 
-/* Nút Mua ngay */
+
 .buy-now {
   background-color: #e63946;
   color: #fff;
@@ -82,7 +82,7 @@
   background-color: #c82333;
 }
 
-/* Chính sách ưu đãi */
+
 .book-policies {
   margin-top: 10px;
   font-size: 14px;
@@ -199,3 +199,38 @@
   background-color: #f5f5f5;
   color: #555;
 }
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 90px;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.quantity-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
+}
+
+.quantity-btn:hover {
+  color: black;
+}
+
+.quantity-number {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  width: 30px;
+  border: none;
+  background: none;
+  outline: none;
+}
+

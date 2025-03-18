@@ -23,6 +23,15 @@ export const getUserInfo = () => {
   const userInfo = localStorage.getItem("userInfo");
   return userInfo ? JSON.parse(userInfo) : null;
 };
+export const getAccountID = () => {
+  const userInfo = localStorage.getItem("userInfo");
+  if (!userInfo) return null;
+
+  const parsedInfo = JSON.parse(userInfo);
+  console.log("🔍 Account ID lấy được:", parsedInfo.AccountId);
+  return parsedInfo.AccountId || null;
+};
+
 
 
 export const getAllAccounts = async (page = 1, pageSize = 10) => {

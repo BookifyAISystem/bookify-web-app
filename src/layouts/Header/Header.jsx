@@ -164,13 +164,18 @@ const Header = () => {
             </Badge>
             <Typography variant="caption">Thông báo</Typography>
           </IconButton>
+          <IconButton 
+  color="inherit" 
+  component={Link} 
+  to="/shopping-cart"
+  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+>
+  <Badge badgeContent={0} color="error">
+    <ShoppingCart />
+  </Badge>
+  <Typography variant="caption">Giỏ hàng</Typography>
+</IconButton>
 
-          <IconButton color="inherit" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Badge badgeContent={0} color="error">
-              <ShoppingCart />
-            </Badge>
-            <Typography variant="caption">Giỏ hàng</Typography>
-          </IconButton>
 
           {user ? (
           <Box sx={{ display: 'flex', gap: 1 }}>
