@@ -34,11 +34,12 @@ const Navbar = () => {
             </button>
           </li>
           <li>
-            <button onClick={() => navigate("/authors")}>
-              <img src={AuthorIcon} alt="Author" className="icon" />
-              Tác giả
-            </button>
-          </li>
+  <button onClick={() => navigate("/authors")}>
+    <img src={AuthorIcon} alt="Author" className="icon" />
+    Tác giả
+  </button>
+</li>
+
           <li>
             <button onClick={() => navigate("/discounts")}>
               <img src={DiscountIcon} alt="Discount" className="icon" />

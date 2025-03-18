@@ -1,0 +1,211 @@
+.shopping-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    margin: auto;
+}
+
+.shopping-cart {
+    background: #f8f8f8;
+    padding: 30px;
+    border-radius: 10px;
+    width: 65%;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+}
+
+.payment-summary {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 60px;
+}
+
+.payment-summary h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.payment-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.total-amount {
+    color: red;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.checkout-button {
+    background: red;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.checkout-button:hover {
+    background: darkred;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+    font-size: 20px;
+    text-align: center;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-column {
+    width: 5%;
+}
+
+.checkbox-column input[type="checkbox"] {
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+.product-column {
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    text-align: left;
+}
+
+.quantity-column {
+    width: 20%;
+}
+
+.price-column {
+    width: 20%;
+}
+
+.delete-column {
+    width: 10%;
+    display: flex;
+    justify-content: center;
+}
+
+.book-image {
+    width: 120px;
+    height: 160px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.book-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.book-title {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.price {
+    color: red;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.quantity-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 5px;
+    gap: 10px;
+    width: 100px;
+    background: white;
+}
+
+.qty-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: gray;
+    cursor: pointer;
+}
+
+.qty-input {
+    font-size: 18px;
+    font-weight: bold;
+    width: 30px;
+    text-align: center;
+    border: none;
+    outline: none;
+}
+
+.total-price {
+    font-weight: bold;
+    color: red;
+    font-size: 22px;
+    text-align: center;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    font-size: 24px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+    color: darkred;
+    transform: scale(1.1);
+}
