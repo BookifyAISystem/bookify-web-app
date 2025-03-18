@@ -1,8 +1,8 @@
 import api from "./apiService";
 import { jwtDecode } from "jwt-decode";
 
-const ACCOUNT_ENDPOINT = "/v1/accounts";
-const AUTHEN_ENDPOINT = "/v1/authen";
+const ACCOUNT_ENDPOINT = "/accounts";
+const AUTHEN_ENDPOINT = "/authen";
 
 
 export const decodeToken = (token) => {
@@ -36,7 +36,7 @@ export const getAccountID = () => {
 
 export const getAllAccounts = async (page = 1, pageSize = 10) => {
   try {
-    const response = await api.get(`${ACCOUNT_ENDPOINT}/getAccountsPaging`, {
+    const response = await api.get(`${ACCOUNT_ENDPOINT}`, {
       params: {
         Page: page,
         PageSize: pageSize,
@@ -51,9 +51,7 @@ export const getAllAccounts = async (page = 1, pageSize = 10) => {
 
 export const getAccountById = async (id) => {
   try {
-    const response = await api.get(`/accounts/getAccont`, {
-      params: { id: id },
-    });
+    const response = await api.get(`${ACCOUNT_ENDPOINT}/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error when getting Account with id ${id}:`, error);
@@ -87,7 +85,7 @@ export const createAccount = async (account) => {
 export const updateAccount = async (id, account) => {
   try {
     const response = await api.put(
-      `${ACCOUNT_ENDPOINT}/updateAccount`,
+      `${ACCOUNT_ENDPOINT}/${id}`,
       {
         password: account.password,
         email: account.email,

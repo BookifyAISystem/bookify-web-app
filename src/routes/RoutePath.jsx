@@ -27,6 +27,9 @@ import BookStore from "../components/BookStore/BookStore";
 import ShoppingCart from '../pages/CustomerPage/ShoppingCart';
 import AuthorsPage from '../pages/CustomerPage/AuthorPage';
 import AuthorDetailPage from '../components/Author/AuthorDetailPage'
+import SupportPage from "../layouts/Footer/SupportPage";
+import ServicePage from "../layouts/Footer/ServicePage";
+
 const RoutePath = () => {
   return (
     <BrowserRouter>
@@ -41,6 +44,8 @@ const RoutePath = () => {
           <Route path="/shopping-cart" element={<ShoppingCart />} />
           <Route path="authors" element={<AuthorsPage />} />
           <Route path="authors/:id" element={<AuthorDetailPage />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="service" element={<ServicePage />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>

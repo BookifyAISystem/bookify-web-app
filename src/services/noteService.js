@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const NOTE_ENDPOINT = "/v1/notes";
+const NOTE_ENDPOINT = "/notes";
 
 export const getAllNotes = async () => {
     try {

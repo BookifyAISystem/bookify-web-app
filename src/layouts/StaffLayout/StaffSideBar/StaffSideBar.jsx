@@ -14,6 +14,7 @@ import {
     DashboardOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import logo from '../../../assets/images/logo1.png';
 import '../StaffSideBar/StaffSideBar.css'; // Create this file for custom styles
 
 const { Sider } = Layout;
@@ -69,7 +70,11 @@ const StaffSideBar = ({ collapsed }) => {
             <div className="sidebar-header">
                 {!collapsed && (
                     <Title level={4} style={{ margin: '16px 0', color: token.colorPrimary }}>
-                        Bookify
+                        <img 
+                            src={logo} 
+                            alt="Logo" 
+                            style={{ height: 30, marginRight: 10 }}
+                        />
                     </Title>
                 )}
                 {collapsed && (

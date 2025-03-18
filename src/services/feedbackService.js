@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const FEEDBACK_ENDPOINT = "/v1/feedbacks";
+const FEEDBACK_ENDPOINT = "/feedbacks";
 
 export const getAllFeedbacks = async () => {
     try {
