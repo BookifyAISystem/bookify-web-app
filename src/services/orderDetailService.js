@@ -1,6 +1,6 @@
 import api from "./apiService";
 
-const ORDER_DETAIL_ENDPOINT = "/order-details";
+const ORDER_DETAIL_ENDPOINT = "orders/order-details";
 
 export const getAllOrderDetails = async () => {
     try {

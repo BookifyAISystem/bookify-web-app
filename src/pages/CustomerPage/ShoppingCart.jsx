@@ -5,16 +5,29 @@ import {
 } from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import deleteIcon from "../../assets/icon/delete.svg";
+import { getOrderByAccount } from "../../services/orderService";
 import "./ShoppingCart.css";
 
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [accountId, setAccountId] = useState(0);
+
+  useEffect(() => {
+      const token = JSON.parse(localStorage.getItem('userInfo'));
+      if (token) {
+        setAccountId(token.AccountId);
+      }
+    }, []);
+
 
   const fetchCartData = async () => {
+    if (accountId === 0) return;
     try {
-      const orderDetails = await getAllOrderDetails();
+      const order = await getOrderByAccount(accountId);
+      // const orderDetails = await getAllOrderDetails();
+      const orderDetails = order.orderDetails;
       if (orderDetails) {
         const validOrders = orderDetails.filter(order => order.status === 1);
         const itemsWithBookDetails = await Promise.all(
@@ -43,7 +56,7 @@ const ShoppingCart = () => {
 
   useEffect(() => {
     fetchCartData();
-  }, []);
+  }, [accountId]);
 
   const totalAmount = selectedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
