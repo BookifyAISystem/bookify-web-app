@@ -78,6 +78,7 @@ export const getLatestOrderByAccount = async (accountId) => {
     }
 };
 
+//lấy ra 1 đơn mới nhất
 export const getOrderByAccount = async (accountId) => {
     try {
         const response = await api.get(`${ORDER_ENDPOINT}/account/${accountId}`);
@@ -94,6 +95,27 @@ export const getOrderByAccount = async (accountId) => {
 
         console.log("✅ Đơn hàng hợp lệ mới nhất:", latestOrder);
         return latestOrder || null;
+    } catch (error) {
+        console.error(`❌ Lỗi khi lấy Order với accountId ${accountId}:`, error);
+        return null;
+    }
+};
+
+//lấy ra list đơn
+export const getOrdersByAccount = async (accountId, status) => {
+    try {
+        const response = await api.get(`${ORDER_ENDPOINT}/account/${accountId}`);
+        const orders = response.data || [];
+
+        console.log("📦 Danh sách đơn hàng nhận từ API:", orders);
+
+        if (!orders.length) return null;
+
+        const filteredOrders = orders
+            .filter(order => order.status === status)
+
+        console.log("✅ Đơn hàng hợp lệ mới nhất:", filteredOrders);
+        return filteredOrders || [];
     } catch (error) {
         console.error(`❌ Lỗi khi lấy Order với accountId ${accountId}:`, error);
         return null;

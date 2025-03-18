@@ -11,8 +11,11 @@ import {
   Button,
   Typography,
   Input,
+  Table,
 } from "antd";
 import { UserOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
+import { getOrdersByAccount } from "../../services/orderService";
+import { getRoleById } from "../../services/roleService";
 import "./Profile.scss"; // Import SCSS
 
 const { Title } = Typography;
@@ -22,16 +25,48 @@ const ProfileView = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("1"); // State lưu tab đang chọn
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "3") {
+      const fetchOrders = async () => {
+        setOrdersLoading(true);
+        try {
+          const data = await getOrdersByAccount(id,2);
+          setOrders(data);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        } finally {
+          setOrdersLoading(false);
+        }
+      };
+  
+      fetchOrders();
+    }
+  }, [activeTab, id]);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
       const data = await getAccountById(id);
-      setProfile(data);
+      if (data) {
+        const role = await fetchRole(data.roleId);
+        data.roleName = role;
+        setProfile(data);
+
+      }
       setLoading(false);
     };
 
     fetchProfile();
   }, [id]);
+
+  const fetchRole = async (roleId) => {
+    const role = await getRoleById(roleId);
+    return role ? role.roleName : roleId;
+  };
+
 
   if (loading)
     return (
@@ -47,6 +82,23 @@ const ProfileView = () => {
       </div>
     );
 
+    // Cột của DataGrid
+  const columns = [
+    { title: "Mã đơn hàng", dataIndex: "orderId", key: "orderId" },
+    { title: "Ngày tạo", dataIndex: "createdDate", key: "createdDate", render: (date) => new Date(date).toLocaleString() },
+    { title: "Tổng tiền", dataIndex: "total", key: "total", render: (total) => `${total.toLocaleString()} VND` },
+    { title: "Trạng thái", dataIndex: "status", key: "status", render: (status) => status === 2 ? "Đã gửi" : "Đã giao" },
+    {
+      title: "Hành động",
+      key: "actions",
+      render: (_, record) => (
+        <Button type="primary" onClick={() => handleViewOrder(record.orderId)}>
+          Xem chi tiết
+        </Button>
+      ),
+    },
+  ];
+
   // Nội dung bên phải thay đổi theo tab
   const renderTabContent = () => {
     switch (activeTab) {
@@ -57,7 +109,7 @@ const ProfileView = () => {
               <Descriptions.Item label="Username">{profile.username || "N/A"}</Descriptions.Item>
               <Descriptions.Item label="Email">{profile.email || "N/A"}</Descriptions.Item>
               <Descriptions.Item label="Phone">{profile.phone || "N/A"}</Descriptions.Item>
-              <Descriptions.Item label="Role ID">{profile.roleId || "N/A"}</Descriptions.Item>
+              <Descriptions.Item label="Role">{profile.roleName || "N/A"}</Descriptions.Item>
             </Descriptions>
             <div className="profile-actions-right">
               <Button type="primary" icon={<EditOutlined />}>
@@ -82,7 +134,13 @@ const ProfileView = () => {
       case "3": // Đơn hàng của tôi
         return (
           <Card title="Đơn hàng của tôi" bordered={false} className="profile-card">
-            <p>Danh sách đơn hàng sẽ hiển thị ở đây.</p>
+            {ordersLoading ? (
+              <Spin tip="Loading..." size="large" />
+            ) : orders.length > 0 ? (
+              <Table dataSource={orders} columns={columns} rowKey="orderId" pagination={{ pageSize: 5 }} />
+            ) : (
+              <Alert message="Không có đơn hàng nào." type="info" showIcon />
+            )}
           </Card>
         );
 

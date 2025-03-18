@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getOrderById } from "../../services/orderService";
+import { getOrderById, changeStatus } from "../../services/orderService";
 import { updateOrderDetail } from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import { getAccountById } from "../../services/accountService";
@@ -76,11 +76,7 @@ const Checkout = () => {
 
   const handlePayment = async () => {
     try {
-      await Promise.all(
-        checkoutItems.map((item) =>
-          updateOrderDetail(item.orderDetailId, { ...item, status: 3 })
-        )
-      );
+      await changeStatus(orderId, 2);
       alert("Thanh toán thành công qua " + paymentMethod);
       navigate("/");
     } catch (error) {
