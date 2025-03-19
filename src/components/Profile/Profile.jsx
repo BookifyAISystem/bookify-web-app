@@ -16,6 +16,7 @@ import {
 import { UserOutlined, EditOutlined, LockOutlined } from "@ant-design/icons";
 import { getOrdersByAccount } from "../../services/orderService";
 import { getRoleById } from "../../services/roleService";
+import { useNavigate } from "react-router-dom";
 import "./Profile.scss"; // Import SCSS
 
 const { Title } = Typography;
@@ -27,6 +28,7 @@ const ProfileView = () => {
   const [activeTab, setActiveTab] = useState("1"); // State lưu tab đang chọn
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeTab === "3") {
@@ -82,6 +84,11 @@ const ProfileView = () => {
       </div>
     );
 
+    const handleViewOrder = (orderId) => {
+      navigate(`/order/${orderId}`);
+    };
+
+    
     // Cột của DataGrid
   const columns = [
     { title: "Mã đơn hàng", dataIndex: "orderId", key: "orderId" },
