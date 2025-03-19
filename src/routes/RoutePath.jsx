@@ -30,6 +30,7 @@ import AuthorDetailPage from '../components/Author/AuthorDetailPage'
 import SupportPage from "../layouts/Footer/SupportPage";
 import ServicePage from "../layouts/Footer/ServicePage";
 import Checkout from "../pages/CustomerPage/Checkout";
+import OrderDetail from "../components/OrderDetail/OrderDetail";
 
 const RoutePath = () => {
   return (
@@ -48,6 +49,7 @@ const RoutePath = () => {
           <Route path="authors/:id" element={<AuthorDetailPage />} />
           <Route path="support" element={<SupportPage />} />
           <Route path="service" element={<ServicePage />} />
+          <Route path="order/:orderId" element={<OrderDetail />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
