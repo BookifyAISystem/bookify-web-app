@@ -141,6 +141,40 @@ const Auth = () => {
   
   const handleRegister = async () => {
     try {
+      if (!/^[a-zA-Z0-9\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶắằẳẵặƯứừửữự]+$/.test(userName)) {
+        alert("UserName must not contain special characters.");
+        return;
+      }
+
+      if (userName.length < 5) {
+        alert("User name must be at least 5 characters long.");
+        return;
+      }
+
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Email must be a valid email address.");
+        return;
+      }
+
+      if (!/^0\d{9}$/.test(phone)) {
+        alert("Phone number must begin with 0 and be 10 digits long.");
+        return;
+      }
+
+      if (fullName.length < 10 || fullName.length > 200) {
+        alert("Full name must be between 10 and 200 characters long.");
+        return;
+      }
+      if (/[^a-zA-Z0-9\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶắằẳẵặƯứừửữự]/.test(fullName)) {
+        alert("Full name must not contain special characters.");
+        return;
+      }
+
       const response = await register({
         UserName: userName,
         Password: password,
