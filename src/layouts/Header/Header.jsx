@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo1.png'
 import './Header.css'
 import {
@@ -24,7 +24,10 @@ import {
   Grid,
   CardContent,
   Tabs,
-  Tab
+  Tab,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -33,8 +36,10 @@ import {
   AccountCircle
 } from '@mui/icons-material';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { debounce } from 'lodash';
 import ProfileTab from '../Header/ProfileTab';
 import SettingTab from '../Header/SettingTab';
+import { getAllBooks } from '../../services/bookService';
 
 // Styled components
 const Search = styled('div')(({ theme }) => ({
@@ -86,9 +91,38 @@ const Header = () => {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
+  const [suggestions, setSuggestions] = useState([]);
+  const navigate = useNavigate();
+  
+  const fetchSuggestions = async (value) => {
+    if (value.length > 2) {
+      try {
+        const data = await getAllBooks(value);
+        if (data && Array.isArray(data.books)) {
+          const filteredBooks = data.books.filter((book) =>
+            book.bookName.toLowerCase().includes(value.toLowerCase())
+          );
+          setSuggestions(filteredBooks);
+        } else {
+          setSuggestions([]);
+        }
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+  
+  
+  
 
-  const handleSearch = () => {
-    console.log('Searching for:', searchTerm);
+  const debouncedFetchSuggestions = useRef(debounce(fetchSuggestions, 300)).current;
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    debouncedFetchSuggestions(value);
   };
 
   const handleToggle = () => {
@@ -110,6 +144,30 @@ const Header = () => {
     localStorage.removeItem('userInfo');
     alert('Đăng xuất thành công!');
     window.location.href = '/login';
+  };
+
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  
+    if (value.length > 2) {
+      try {
+        const data = await getAllBooks();
+        const filteredBooks = data.filter((book) =>
+          book.title.toLowerCase().includes(value.toLowerCase())
+        );
+        setSuggestions(filteredBooks);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+  
+  const handleSelectBook = (bookId) => {
+    navigate(`/book/${bookId}`);
+    setSuggestions([]);
   };
 
   useEffect(() => {
@@ -139,20 +197,26 @@ const Header = () => {
 
         {/* Search Bar */}
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}> 
-          <Search sx={{ width: '50%' }}> {/* Đặt width để giới hạn độ dài */}
+          <Search sx={{ width: '50%' }}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Tìm kiếm..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
+              onChange={handleSearchChange}
             />
+            {suggestions.length > 0 && (
+              <Paper sx={{ position: 'absolute', width: '100%', zIndex: 10, mt: 1 }}>
+                <List>
+                  {suggestions.map((book) => (
+                    <ListItem button key={book.bookId} onClick={() => handleSelectBook(book.bookId)}>
+                      <ListItemText primary={book.bookName} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
           </Search>
         </Box>
 
@@ -165,16 +229,16 @@ const Header = () => {
             <Typography variant="caption">Thông báo</Typography>
           </IconButton>
           <IconButton 
-  color="inherit" 
-  component={Link} 
-  to="/shopping-cart"
-  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
->
-  <Badge badgeContent={0} color="error">
-    <ShoppingCart />
-  </Badge>
-  <Typography variant="caption">Giỏ hàng</Typography>
-</IconButton>
+            color="inherit" 
+            component={Link} 
+            to="/shopping-cart"
+            sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+          >
+            <Badge badgeContent={0} color="error">
+              <ShoppingCart />
+            </Badge>
+            <Typography variant="caption">Giỏ hàng</Typography>
+          </IconButton>
 
 
           {user ? (

@@ -2,13 +2,18 @@ import api from "./apiService";
 
 const BOOK_ENDPOINT = "/books";
 
-export const getAllBooks = async () => {
+export const getAllBooks = async (query = "", pageNumber = 1, pageSize = 10) => {
     try {
-        const response = await api.get(BOOK_ENDPOINT);
+        const response = await api.get(BOOK_ENDPOINT, {
+            params: {
+                query,
+                pageNumber,
+                pageSize,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error("Error when fetching all books:", error);
-        //throw error;
         return null;
     }
 };
