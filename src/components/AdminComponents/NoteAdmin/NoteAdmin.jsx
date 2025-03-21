@@ -3,6 +3,7 @@ import './NoteAdmin.scss'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { getAllNotes, createNote, updateNote, deleteNote } from '../../../services/noteService';
 import { Edit, Delete } from '@mui/icons-material';
+import { getUserInfo } from '../../../services/accountService';
 import * as XLSX from 'xlsx';
 
 
@@ -13,10 +14,17 @@ const NoteAdmin = () => {
     const [noteToDelete, setNoteToDelete] = useState(null);
     const [openEdit, setOpenEdit] = useState(false);
     const [editNote, setEditNote] = useState({ id: null, content: '', status: 0 });
+    const [accountId, setAccountId] = useState(null);
   
     useEffect(() => {
       fetchNotes();
+      fetchUserInfo();
     }, []);
+
+    const fetchUserInfo = async () => {
+      const userInfo = await getUserInfo();
+      setAccountId(userInfo.AccountId);
+    };
   
     const fetchNotes = async () => {
       const data = await getAllNotes();
@@ -34,7 +42,7 @@ const NoteAdmin = () => {
   
     const addNote = async () => {
       if (newContent.trim()) {
-        const newNote = await createNote({ content: newContent, status: 1 });
+        const newNote = await createNote({ content: newContent, status: 1, accountId: accountId });
         if (newNote) {
           setNotes([...notes, newNote]);
           setNewContent('');
