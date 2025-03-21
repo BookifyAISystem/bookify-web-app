@@ -35,79 +35,114 @@ const BookDetail = () => {
     }
 
     try {
+        // 🛑 Kiểm tra đơn hàng hợp lệ
         let order = await getOrderByAccount(accountId);
-        console.log("📦 Đơn hàng hiện tại:", order);
+        console.log("📦 Đơn hàng hiện tại từ API:", order);
 
-        if (!order || !order.orderId) {
+        let isNewOrder = false;
+
+        if (!order || !order.orderId || order.status !== 1) {
+            console.log("🚀 Đơn hàng không hợp lệ (status != 1), tạo đơn hàng mới...");
+
             order = await createOrder({
                 accountId: accountId,
                 voucherId: null,
                 orderDetails: [],
             });
 
-            console.log("📤 Đơn hàng mới tạo:", order);
+            console.log("📤 Đơn hàng mới được tạo:", order);
+            isNewOrder = true;
+
+            // Chờ backend cập nhật trước khi lấy lại order
+            await new Promise(res => setTimeout(res, 500));
+
             if (!order || !order.orderId) {
-                alert("Không thể tạo đơn hàng mới.");
+                console.warn("⚠ API createOrder không trả về orderId, thử lấy order gần nhất...");
+                order = await getOrderByAccount(accountId);
+            }
+
+            if (!order || !order.orderId) {
+                console.error("❌ API createOrder lỗi! Không có đơn hàng hợp lệ.");
+                alert("Không thể tạo đơn hàng mới. Vui lòng thử lại.");
                 return;
             }
         }
 
         const orderId = order.orderId;
-        console.log(`✅ Sử dụng orderId: ${orderId}`);
+        console.log(`✅ Đơn hàng hợp lệ có ID: ${orderId}, Status: ${order.status}`);
 
+        // 🛑 Lấy danh sách orderDetails của đơn hàng hiện tại
         let orderDetails = await getOrderDetailsByOrderId(orderId);
-        console.log("🛒 OrderDetails nhận được:", orderDetails);
+        console.log("🛒 Danh sách sản phẩm trong đơn hàng:", orderDetails);
 
         if (!Array.isArray(orderDetails)) {
-            console.error("❌ orderDetails không phải là một mảng:", orderDetails);
+            console.warn("⚠️ orderDetails không phải mảng. Tạo mảng rỗng.");
             orderDetails = [];
         }
 
-        // ✅ Kiểm tra sản phẩm có trong giỏ hàng không
-        const existingItem = orderDetails.find(detail => detail.bookId === book.bookId);
+        // ✅ Chỉ lấy orderDetail thuộc đơn hàng mới nhất
+        let existingItem = orderDetails.find(detail => detail.bookId === book.bookId && detail.orderId === orderId);
 
         if (existingItem) {
+            console.log(`📌 Kiểm tra điều kiện: order.status = ${order.status}, orderDetail.status = ${existingItem.status}`);
+
             if (existingItem.status === 1) {
-                console.log("🔄 Sản phẩm đã có, cập nhật số lượng...");
-                const updatedData = {
-                    quantity: existingItem.quantity + quantity, // Cập nhật số lượng đã chọn
-                    price: book.price,
+                console.log("🔼 Sản phẩm đã có trong giỏ hàng, cập nhật số lượng...");
+                await updateOrderDetail(existingItem.orderDetailId, {
                     orderId: orderId,
                     bookId: book.bookId,
+                    quantity: existingItem.quantity + 1,
+                    price: book.price,
+                    status: 1
+                });
+            } else if (existingItem.status === 0) {
+                console.log("🔁 Sản phẩm từng bị xóa, thử cập nhật lại...");
+
+                const updateResponse = await updateOrderDetail(existingItem.orderDetailId, {
+                    orderId: orderId,
+                    bookId: book.bookId,
+                    quantity: 1,
+                    price: book.price,
                     status: 1,
-                };
+                });
 
-                await updateOrderDetail(existingItem.orderDetailId, updatedData);
-            } else {
-                console.log("✅ Sản phẩm đã bị xóa trước đó, khôi phục lại...");
-                const restoreData = {
-                    quantity: quantity, // Sử dụng số lượng đã chọn
-                    price: book.price,
-                    orderId: orderId,
-                    bookId: book.bookId,
-                    status: 1, // Khôi phục trạng thái về 1
-                };
-
-                await updateOrderDetail(existingItem.orderDetailId, restoreData);
+                if (!updateResponse) {
+                    console.log("❌ Cập nhật thất bại! Thay vào đó, tạo mới orderDetail...");
+                    await createOrderDetail({
+                        orderId: orderId,
+                        bookId: book.bookId,
+                        quantity: 1,
+                        price: book.price,
+                        status: 1
+                    });
+                }
             }
         } else {
-            console.log("➕ Sản phẩm chưa có, thêm mới...");
+            console.log("➕ Sản phẩm chưa có, tạo mới orderDetail...");
+
             await createOrderDetail({
                 orderId: orderId,
                 bookId: book.bookId,
-                quantity: quantity, // Thêm số lượng đã chọn
+                quantity: 1,
                 price: book.price,
-                status: 1,
+                status: 1
             });
-        }
 
-        alert(`🎉 Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
+            // Chờ API cập nhật rồi kiểm tra lại orderDetails
+            await new Promise(res => setTimeout(res, 500));
+            orderDetails = await getOrderDetailsByOrderId(orderId);
+            console.log("✅ Kiểm tra lại orderDetails sau khi thêm:", orderDetails);
+        }
+        alert(`🎉 Đã thêm sản phẩm vào giỏ hàng!`);
     } catch (error) {
         console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
         alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
 };
 
+
+  
+  
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (!book) return <p>Không tìm thấy sách!</p>;
 

@@ -34,27 +34,44 @@ export const getOrderDetailsByOrderId = async (orderId) => {
 
 
 
-
-
-
 export const createOrderDetail = async (orderDetail) => {
     try {
+        console.log("📤 Gửi request tạo orderDetail với dữ liệu:", orderDetail);
+
+        // 🔍 Kiểm tra nếu dữ liệu không hợp lệ thì báo lỗi
+        if (!orderDetail || !orderDetail.orderId || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
+            console.error("❌ Lỗi: Dữ liệu truyền vào không hợp lệ!", orderDetail);
+            return null;
+        }
+
         const response = await api.post(ORDER_DETAIL_ENDPOINT, orderDetail);
+        console.log("✅ API createOrderDetail response:", response.data);
         return response.data || null;
-    } catch {
+    } catch (error) {
+        console.error("❌ Lỗi khi gọi API createOrderDetail:", error);
         return null;
     }
 };
 
+
 export const updateOrderDetail = async (id, orderDetail) => {
     try {
+        console.log(`📤 Gửi request cập nhật OrderDetail ID: ${id}`, orderDetail);
+
+        // 🔍 Kiểm tra nếu dữ liệu không hợp lệ thì không gửi request
+        if (!orderDetail || !orderDetail.orderId || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
+            console.error("❌ Dữ liệu cập nhật không hợp lệ!", orderDetail);
+            return null;
+        }
+
         const response = await api.put(`${ORDER_DETAIL_ENDPOINT}/${id}`, orderDetail, {
             headers: { "Content-Type": "application/json" },
         });
 
+        console.log(`✅ API updateOrderDetail response (${id}):`, response.data || response.status);
         return response.status === 204 || response.data || null;
     } catch (error) {
-        console.error(`Lỗi khi cập nhật OrderDetail với id ${id}:`, error);
+        console.error(`❌ Lỗi khi cập nhật OrderDetail với ID ${id}:`, error.response ? error.response.data : error);
         return null;
     }
 };

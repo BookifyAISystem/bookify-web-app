@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getOrderById } from "../../services/orderService";
+import { getOrderById, updateOrderTotal } from "../../services/orderService";
 import { getBookById } from "../../services/bookService";
 import "./OrderDetail.scss";
 
@@ -16,6 +16,7 @@ const OrderDetail = () => {
       try {
         const order = await getOrderById(orderId);
         setOrderInfo(order);
+  
         const itemsWithBookDetails = await Promise.all(
           order.orderDetails.map(async (detail) => {
             const book = await getBookById(detail.bookId);
@@ -32,16 +33,24 @@ const OrderDetail = () => {
               : null;
           })
         );
-        setOrderDetails(itemsWithBookDetails.filter(item => item !== null));
+  
+        const validItems = itemsWithBookDetails.filter(item => item !== null);
+        setOrderDetails(validItems);
+  
+        // 🔥 Cập nhật tổng tiền vào API
+        const newTotal = validItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        await updateOrderTotal(orderId, newTotal);
+  
       } catch (error) {
         alert("Lỗi khi lấy chi tiết đơn hàng.");
       }
     };
     fetchOrderDetail();
   }, [orderId, navigate]);
+  
 
   const totalAmount = orderDetails.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.price * item.quantity, 
     0
   );
 
