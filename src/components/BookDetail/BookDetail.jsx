@@ -11,6 +11,10 @@ const BookDetail = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [showSummary, setShowSummary] = useState(false);
+  const [generatedSummary, setGeneratedSummary] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [displaySummary, setDisplaySummary] = useState("");
 
   useEffect(() => {
     const fetchBookDetail = async () => {
@@ -23,6 +27,30 @@ const BookDetail = () => {
 
     fetchBookDetail();
   }, [id]);
+
+  useEffect(() => {
+    let intervalId;
+    if (showSummary && generatedSummary) {
+      let currentIndex = 0;
+      setDisplaySummary("");
+      setIsGenerating(true);
+      
+      intervalId = setInterval(() => {
+        if (currentIndex < generatedSummary.length) {
+          setDisplaySummary(prev => prev + generatedSummary[currentIndex]);
+          currentIndex++;
+        } else {
+          clearInterval(intervalId);
+          setIsGenerating(false);
+        }
+      }, 50); // Tốc độ gõ chữ: 50ms/ký tự
+    }
+
+    return () => {
+      clearInterval(intervalId);
+      setIsGenerating(false);
+    };
+  }, [showSummary, generatedSummary]);
 
   const handleIncrease = () => setQuantity(quantity + 1);
   const handleDecrease = () => quantity > 1 && setQuantity(quantity - 1);
@@ -108,11 +136,64 @@ const BookDetail = () => {
     }
 };
 
+  const handleGenerateSummary = async () => {
+    try {
+      // Giả lập API call - Thay bằng API thực tế của bạn
+      const fakeApiCall = () => 
+        new Promise(resolve => 
+          setTimeout(() => resolve(book?.summary || "  Nội dung tóm tắt chi tiết sẽ được cập nhật trong phiên bản kế tiếp..."), 1000)
+        );
+
+      const summary = await fakeApiCall();
+      setGeneratedSummary(summary);
+    } catch (error) {
+      console.error("Lỗi khi tạo tóm tắt:", error);
+      setGeneratedSummary("Không thể tạo tóm tắt lúc này, vui lòng thử lại sau.");
+    }
+  };
+
+  const renderSummaryModal = () => (
+    <div className={`modal ${showSummary ? "show" : ""}`} onClick={() => setShowSummary(false)}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Tóm tắt sách {book?.bookName}</h2>
+          <button className="close-btn" onClick={() => setShowSummary(false)}>
+            &times;
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className={`generating-text ${isGenerating ? "generating" : ""}`}>
+            {displaySummary}
+            {isGenerating && <span className="cursor">|</span>}
+          </div>
+          {!generatedSummary && (
+            <button 
+              className="generate-btn"
+              onClick={handleGenerateSummary}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <i className="fas fa-spinner fa-spin"></i> Đang tạo tóm tắt...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-robot"></i> Tạo tóm tắt bằng AI
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (!book) return <p>Không tìm thấy sách!</p>;
 
   return (
     <div className="book-detail-container">
+      {renderSummaryModal()}
       <div className="book-detail">
         <div className="book-detail-left">
           <img src={book.bookImage} alt={book.bookName} className="book-detail-image" />
@@ -169,6 +250,12 @@ const BookDetail = () => {
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <div className="summary-section">
+            <button className="summary-btn" onClick={() => setShowSummary(true)}>
+              <i className="fas fa-book-open"></i> Xem tóm tắt sách
+            </button>
           </div>
         </div>
       </div>
