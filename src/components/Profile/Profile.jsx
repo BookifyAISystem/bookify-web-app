@@ -143,7 +143,7 @@ const ProfileView = () => {
           <Card title="Đơn hàng của tôi" bordered={false} className="profile-card">
             {ordersLoading ? (
               <Spin tip="Loading..." size="large" />
-            ) : orders.length > 0 ? (
+            ) : orders?.length > 0 ? (
               <Table dataSource={orders} columns={columns} rowKey="orderId" pagination={{ pageSize: 5 }} />
             ) : (
               <Alert message="Không có đơn hàng nào." type="info" showIcon />

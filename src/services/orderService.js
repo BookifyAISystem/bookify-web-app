@@ -6,7 +6,8 @@ export const getAllOrders = async () => {
     try {
         const response = await api.get(ORDER_ENDPOINT);
         return response.data || [];
-    } catch {
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng:", error);
         return [];
     }
 };

@@ -31,6 +31,7 @@ import SupportPage from "../layouts/Footer/SupportPage";
 import ServicePage from "../layouts/Footer/ServicePage";
 import Checkout from "../pages/CustomerPage/Checkout";
 import OrderDetail from "../components/OrderDetail/OrderDetail";
+import Orders from "../components/AdminComponents/Orders/Orders";
 
 const RoutePath = () => {
   return (
@@ -70,6 +71,7 @@ const RoutePath = () => {
           <Route path="users/:id" element={<User />} />
           <Route path="books" element={<Books />} />
           <Route path="books/:id" element={<Book />} />
+          <Route path="orders" element={<Orders />} />
           <Route path="roles" element={<Roles />} />
           <Route path="notes" element={<NoteAdmin />} />
         </Route>
