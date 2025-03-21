@@ -8,8 +8,8 @@ export const getAllCategories = async () => {
         return response.data;
     } catch (error) {
         console.error("Error when fetching all categories:", error);
-        //throw error;
-        return null;
+        // It's better to throw the error than return null
+        throw error;
     }
 };
 
@@ -47,13 +47,27 @@ export const updateCategory = async (id, category) => {
 };
 
 export const deleteCategory = async (id) => {
+    if (!id) {
+        console.error("Cannot delete category: Missing categoryId");
+        throw new Error("Missing category ID");
+    }
+    
     try {
+        console.log(`Making DELETE request to: ${CATEGORY_ENDPOINT}/${id}`);
+        
         const response = await api.delete(`${CATEGORY_ENDPOINT}/${id}`);
-        return response.data;
+        console.log("Delete API response:", response);
+        
+        // Check if the response indicates success
+        if (response.status >= 200 && response.status < 300) {
+            return response.data;
+        } else {
+            console.error(`Unexpected status when deleting Category with id ${id}:`, response.status);
+            throw new Error(`Failed to delete category. Server returned status ${response.status}`);
+        }
     } catch (error) {
         console.error(`Error when deleting Category with id ${id}:`, error);
-        //throw error;
-        return null;
+        throw error; // Re-throw the error for component handling
     }
 };
 
