@@ -254,34 +254,70 @@
 
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
+  padding: 25px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 700px;
   max-height: 80vh;
-  overflow-y: auto;
+  overflow: auto;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
 }
 
 .close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
+  font-size: 28px;
   color: #666;
+  transition: color 0.3s;
 }
 
-.modal-body {
-  line-height: 1.6;
-  text-align: justify;
+.close-btn:hover {
+  color: #333;
+}
+
+.summary-controls {
+  margin-bottom: 15px;
+  text-align: right;
+}
+
+.generating-text {
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 200px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  white-space: pre-wrap;
+}
+
+.typing-cursor {
+  animation: blink 1s step-end infinite;
+  color: #2c3e50;
+}
+
+.summary-btn {
+  background: #3498db;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.summary-btn:hover {
+  background: #2980b9;
+}
+
+.summary-btn i {
+  margin-right: 8px;
 }
 
 /* Nút tóm tắt */
@@ -302,60 +338,177 @@
 
 /* Summary section */
 .summary-section {
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-  text-align: center;
+  margin-top: 2rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
-.summary-section .summary-btn {
-  width: 100%;
-  max-width: 300px;
-  padding: 15px;
-  font-size: 16px;
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-/* Hiệu ứng gõ chữ */
-.generating-text {
-  white-space: pre-wrap;
-  min-height: 150px;
-  position: relative;
-}
-
-.cursor {
-  animation: blink 1s infinite;
-  color: #666;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.generate-btn {
-  margin-top: 20px;
-  padding: 12px 25px;
-  background-color: #2196F3;
+.regenerate-btn {
+  background: #4CAF50;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  transition: background 0.3s;
 }
 
-.generate-btn:hover {
-  background-color: #1976D2;
+.regenerate-btn:hover {
+  background: #45a049;
 }
 
-.generate-btn:disabled {
-  background-color: #90CAF9;
+.regenerate-btn:disabled {
+  background: #cccccc;
   cursor: not-allowed;
+}
+
+.summary-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.summary-content {
+  line-height: 1.6;
+  min-height: 100px;
+  white-space: pre-wrap;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
 }
 
 .fa-spinner {
   margin-right: 8px;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.fa-spinner {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+/* Style cho modal */
+.empty-summary {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.generate-ai-btn {
+  background: #27ae60;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.generate-ai-btn:hover {
+  background: #219a52;
+}
+
+.regenerate-btn {
+  background: #2980b9;
+  /* Giữ style cũ */
+}
+
+.view-summary-btn {
+  /* Giữ style cũ */
+}
+
+/* Nút Xem tóm tắt chính */
+.view-summary-btn {
+  background: #3498db;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.view-summary-btn:hover {
+  background: #2980b9;
+}
+
+.view-summary-btn i {
+  font-size: 1.1em;
+}
+
+/* Nút Tạo lại trong modal */
+.regenerate-btn {
+  background: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.regenerate-btn:hover {
+  background: #45a049;
+}
+
+.regenerate-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+/* Nút Tạo AI trong modal */
+.generate-ai-btn {
+  background: #e67e22;
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.generate-ai-btn:hover {
+  background: #d35400;
+  transform: translateY(-2px);
+}
+
+.generate-ai-btn:active {
+  transform: translateY(0);
+}
+
+/* Các style chung cho icon */
+button i {
+  transition: transform 0.2s;
+}
+
+button:hover i {
+  transform: rotate(15deg);
 }
 
