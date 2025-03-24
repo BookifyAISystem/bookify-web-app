@@ -4,6 +4,7 @@ import { getBookById } from "../../services/bookService";
 import { getAccountID } from "../../services/accountService";
 import { createOrder, getOrderByAccount } from "../../services/orderService";
 import { getOrderDetailsByOrderId, createOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
+import { getBookContentVersionByBookId } from "../../services/bookContentVersion";
 import "./BookDetail.css";
 
 const BookDetail = () => {
@@ -11,6 +12,12 @@ const BookDetail = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [showSummary, setShowSummary] = useState(false);
+  const [contentData, setContentData] = useState([]);
+  const [currentSummaryIndex, setCurrentSummaryIndex] = useState(0);
+  const [generatedSummary, setGeneratedSummary] = useState("");
+  const [displaySummary, setDisplaySummary] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const fetchBookDetail = async () => {
@@ -108,6 +115,72 @@ const BookDetail = () => {
     }
 };
 
+  const handleShowSummary = () => {
+    setShowSummary(true);
+    if (contentData.length === 0) {
+      setGeneratedSummary("");
+      setDisplaySummary("");
+    }
+  };
+
+  const handleGenerateAISummary = async () => {
+    try {
+      const data = await getBookContentVersionByBookId(id);
+      setContentData(data || []);
+      
+      if (data?.[0]?.summaries?.length > 0) {
+        const firstSummary = data[0].summaries[0]?.toString().replace(/undefined/g, '');
+        setGeneratedSummary(firstSummary);
+        setCurrentSummaryIndex(0);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải tóm tắt:", error);
+    }
+  };
+
+  const handleRegenerate = () => {
+    if (!contentData?.[0]?.summaries) return;
+    
+    const summaries = contentData[0].summaries;
+    const newIndex = (currentSummaryIndex + 1) % summaries.length;
+    const nextSummary = summaries[newIndex]?.toString() || "";
+    // const nextSummary = summaries[newIndex]?.toString().replace(/undefined/g, '') || "";
+    
+    setCurrentSummaryIndex(newIndex);
+    setGeneratedSummary(nextSummary);
+  };
+
+  useEffect(() => {
+    let intervalId;
+    let currentCharIndex = 0;
+    
+    if (showSummary && generatedSummary) {
+      // Đảm bảo generatedSummary là string hợp lệ
+      const safeSummary = generatedSummary.toString().replace(/undefined/g, '');
+      
+      setDisplaySummary("");
+      
+      intervalId = setInterval(() => {
+        if (currentCharIndex < safeSummary.length) {
+          setDisplaySummary(prev => {
+            // Kiểm tra ký tự hiện tại
+            const currentChar = safeSummary[currentCharIndex-1] || '';
+            return prev + currentChar;
+          });
+          console.log("🔄 Cập nhật tóm tắt:", displaySummary);
+          currentCharIndex++;
+        } else {
+          clearInterval(intervalId);
+        }
+      }, 30);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+      currentCharIndex = 0;
+    };
+  }, [showSummary, generatedSummary]);
+
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (!book) return <p>Không tìm thấy sách!</p>;
 
@@ -170,8 +243,58 @@ const BookDetail = () => {
               </tbody>
             </table>
           </div>
+
+          <div className="summary-section">
+            <button 
+              className="view-summary-btn"
+              onClick={handleShowSummary}
+            >
+              <i className="fas fa-book-open"></i>
+              Xem tóm tắt
+            </button>
+          </div>
         </div>
       </div>
+
+      {showSummary && (
+        <div className="modal show">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Tóm tắt sách: {book.bookName}</h2>
+              <button className="close-btn" onClick={() => setShowSummary(false)}>
+                &times;
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {contentData.length === 0 ? (
+                <div className="empty-summary">
+                  <button 
+                    className="generate-ai-btn"
+                    onClick={handleGenerateAISummary}
+                  >
+                    <i className="fas fa-robot"></i>
+                    Tạo tóm tắt bằng AI
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="summary-controls">
+                    <button className="regenerate-btn" onClick={handleRegenerate}>
+                      <i className="fas fa-sync-alt"></i>
+                      Tạo bản mới ({currentSummaryIndex + 1}/{contentData[0]?.summaries?.length})
+                    </button>
+                  </div>
+                  <div className="generating-text">
+                    {displaySummary}
+                    <span className="typing-cursor">|</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import api from "./apiService"; 
 
-const BOOK_CONTENT_VERSION_ENDPOINT = "/v1/book-content-version";
+const BOOK_CONTENT_VERSION_ENDPOINT = "book-content-version";
 
 export const getAllBookContentVersions = async () => {
     try {
@@ -16,6 +16,17 @@ export const getAllBookContentVersions = async () => {
 export const getBookContentVersionById = async (id) => {
     try {
         const response = await api.get(`${BOOK_CONTENT_VERSION_ENDPOINT}/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error when getting BookContentVersion with id ${id}:`, error);
+        //throw error;
+        return null;
+    }
+};
+
+export const getBookContentVersionByBookId = async (id) => {
+    try {
+        const response = await api.get(`${BOOK_CONTENT_VERSION_ENDPOINT}/by-book/${id}`);
         return response.data;
     } catch (error) {
         console.error(`Error when getting BookContentVersion with id ${id}:`, error);

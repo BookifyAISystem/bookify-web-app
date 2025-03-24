@@ -33,11 +33,14 @@ const columns = [
 const Orders = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const fetchAccount = async (accountId) => {
     const account = await getAccountById(accountId);
     return account?.displayName || accountId;
   }
+
+  const handleCloseDetail = () => setSelectedOrder(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -87,9 +90,9 @@ const Orders = () => {
                     <img src="/view.png" alt="Chi tiết" style={{ opacity: 0.5, cursor: 'not-allowed' }} />
                   </div>
                 ) : (
-                  <Link to={`/admin/order/${params.row.id}`}>
+                  <div onClick={() => setSelectedOrder(params.row)}>
                     <img src="/view.png" alt="Chi tiết" />
-                  </Link>
+                  </div>
                 )}
                 <div className="status" onClick={() => handleStatusChange(params.row.id)}>
                   <img src="/edit.svg" alt="Đổi trạng thái" />
@@ -103,6 +106,47 @@ const Orders = () => {
           autoHeight
         />
       </div>
+
+      {selectedOrder && (
+        <div className="order-detail-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Chi tiết đơn hàng #{selectedOrder.id}</h2>
+              <span className="close" onClick={handleCloseDetail}>&times;</span>
+            </div>
+
+            <div className="order-info">
+              <p><strong>Ngày tạo:</strong> {new Date(selectedOrder.createdDate).toLocaleString()}</p>
+              <p><strong>Trạng thái:</strong> {statusConfig[selectedOrder.status]?.text}</p>
+              <p><strong>Khách hàng:</strong> {selectedOrder.accountId}</p>
+              <p><strong>Voucher:</strong> {selectedOrder.voucherId || 'Không áp dụng'}</p>
+              {selectedOrder.cancelReason && <p><strong>Lý do hủy:</strong> {selectedOrder.cancelReason}</p>}
+            </div>
+
+            <div className="order-items">
+              <h3>Sản phẩm</h3>
+              {selectedOrder.orderDetails?.map(item => (
+                <div key={item.orderDetailId} className="order-item">
+                  <div className="item-info">
+                    <span className="product-name">Sản phẩm #{item.bookId}</span>
+                    <span className="quantity">Số lượng: {item.quantity}</span>
+                  </div>
+                  <div className="item-price">
+                    {(item.price * item.quantity).toLocaleString()}₫
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="order-total">
+              <span>Tổng cộng:</span>
+              <span className="total-amount">
+                {selectedOrder.total.toLocaleString()}₫
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
