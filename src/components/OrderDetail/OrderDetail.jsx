@@ -9,7 +9,6 @@ const OrderDetail = () => {
   const [orderInfo, setOrderInfo] = useState(null);
   const navigate = useNavigate();
   const { orderId } = useParams();
-
   useEffect(() => {
     const fetchOrderDetail = async () => {
       if (!orderId) return;
@@ -37,9 +36,8 @@ const OrderDetail = () => {
         const validItems = itemsWithBookDetails.filter(item => item !== null);
         setOrderDetails(validItems);
   
-        // 🔥 Cập nhật tổng tiền vào API
-        const newTotal = validItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        await updateOrderTotal(orderId, newTotal);
+        // ❌ BỎ UPDATE TỔNG TIỀN
+        // await updateOrderTotal(orderId, newTotal);
   
       } catch (error) {
         alert("Lỗi khi lấy chi tiết đơn hàng.");

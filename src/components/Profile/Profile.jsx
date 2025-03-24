@@ -35,8 +35,15 @@ const ProfileView = () => {
       const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
-          const data = await getOrdersByAccount(id,2);
-          setOrders(data);
+          let data = await getOrdersByAccount(id, 2);
+  
+          // ✅ Cập nhật lại total bằng cách tính tổng dựa trên orderDetails
+          const updatedOrders = data.map(order => ({
+            ...order,
+            total: order.orderDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+          }));
+  
+          setOrders(updatedOrders);
         } catch (error) {
           console.error("Error fetching orders:", error);
         } finally {
@@ -47,6 +54,7 @@ const ProfileView = () => {
       fetchOrders();
     }
   }, [activeTab, id]);
+  
 
 
   useEffect(() => {
@@ -85,26 +93,31 @@ const ProfileView = () => {
     );
 
     const handleViewOrder = (orderId) => {
+      // Lưu trạng thái tab trước khi điều hướng
+      sessionStorage.setItem("lastActiveTab", activeTab);
+  
+      // Điều hướng đến trang chi tiết đơn hàng
       navigate(`/order/${orderId}`);
-    };
-
+  };
+  
     
     // Cột của DataGrid
-  const columns = [
-    { title: "Mã đơn hàng", dataIndex: "orderId", key: "orderId" },
-    { title: "Ngày tạo", dataIndex: "createdDate", key: "createdDate", render: (date) => new Date(date).toLocaleString() },
-    { title: "Tổng tiền", dataIndex: "total", key: "total", render: (total) => `${total.toLocaleString()} VND` },
-    { title: "Trạng thái", dataIndex: "status", key: "status", render: (status) => status === 2 ? "Đã gửi" : "Đã giao" },
-    {
-      title: "Hành động",
-      key: "actions",
-      render: (_, record) => (
-        <Button type="primary" onClick={() => handleViewOrder(record.orderId)}>
-          Xem chi tiết
-        </Button>
-      ),
-    },
-  ];
+    const columns = [
+      { title: "Mã đơn hàng", dataIndex: "orderId", key: "orderId" },
+      { title: "Ngày tạo", dataIndex: "createdDate", key: "createdDate", render: (date) => new Date(date).toLocaleString() },
+      { title: "Tổng tiền", dataIndex: "total", key: "total", render: (total) => `${total.toLocaleString()} VND` },
+      { title: "Trạng thái", dataIndex: "status", key: "status", render: (status) => status === 2 ? "Đã gửi" : "Đã giao" },
+      {
+        title: "Hành động",
+        key: "actions",
+        render: (_, record) => (
+          <Button type="primary" onClick={() => handleViewOrder(record.orderId)}>
+            Xem chi tiết
+          </Button>
+        ),
+      },
+    ];
+    
 
   // Nội dung bên phải thay đổi theo tab
   const renderTabContent = () => {
