@@ -67,22 +67,23 @@ const BookWareHousePage = () => {
         try {
             setLoading(true);
             const response = await getAllBooks();
-            if (response) {
-                const formattedData = response.map((book, index) => ({
-                    key: book.id,
+            if (response && response.books) {
+                const formattedData = response.books.map((book, index) => ({
+                    key: book.bookId,
                     stt: index + 1,
-                    name: book.title,
-                    category: book.category.name,
-                    year: new Date(book.publishDate).getFullYear(),
+                    name: book.bookName,
+                    category: book.bookType,
+                    year: book.publishYear,
                     price: `${book.price.toLocaleString()}₫`,
-                    ebookPrice: `${book.ebookPrice.toLocaleString()}₫`,
-                    status: book.status,
-                    stock: book.stockQuantity
+                    ebookPrice: `${book.priceEbook.toLocaleString()}₫`,
+                    status: getBookStatus(book.quantity),
+                    stock: book.quantity
                 }));
                 setBooks(formattedData);
                 setPagination(prev => ({
                     ...prev,
-                    total: response.length
+                    total: response.totalItems,
+                    current: response.currentPage
                 }));
             }
         } catch (error) {
@@ -92,14 +93,30 @@ const BookWareHousePage = () => {
         }
     };
 
+    // Helper function to determine book status based on quantity
+    const getBookStatus = (quantity) => {
+        if (quantity <= 0) {
+            return 'Out of Stock';
+        } else if (quantity < 10) {
+            return 'Low Stock';
+        } else {
+            return 'Available';
+        }
+    };
+
     const fetchCategories = async () => {
         try {
             const response = await getAllBookCategories();
-            if (response) {
+            if (response && Array.isArray(response)) {
                 setCategories(response);
+            } else {
+                // Handle empty or invalid response
+                setCategories([]);
+                console.warn('Categories data is not available or not in expected format');
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
+            setCategories([]);
         }
     };
 
