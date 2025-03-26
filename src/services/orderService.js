@@ -21,36 +21,40 @@ export const getOrderById = async (id) => {
 };
 
 export const createOrder = async (orderData) => {
-    try {
-      console.log("📤 Gửi request tạo order với data:", orderData);
-  
-      const response = await api.post(ORDER_ENDPOINT, orderData, {
-        headers: { "Content-Type": "application/json" },
-      });
-  
-      console.log("📥 Response từ API createOrder:", response.data);
-  
-      // Nếu API không trả về orderId, thử lấy lại đơn hàng mới nhất
-      if (!response.data || !response.data.orderId) {
-        console.warn("⚠ API không trả về orderId, thử lấy đơn hàng gần nhất...");
-  
-        await new Promise(res => setTimeout(res, 200)); // Chờ backend cập nhật
-  
-        const latestOrder = await getOrderByAccount(orderData.accountId);
-        
-        if (!latestOrder || latestOrder.status !== 1) {
-          console.error("❌ Không có đơn hàng hợp lệ! API createOrder có vấn đề.");
-          return null;
-        }
-        return latestOrder;
-      }
-  
-      return response.data;
-    } catch (error) {
-      console.error("❌ Lỗi khi tạo đơn hàng:", error.response ? error.response.data : error);
-      return null;
+  try {
+    // Xoá orderDetails nếu rỗng
+    if (Array.isArray(orderData.orderDetails) && orderData.orderDetails.length === 0) {
+      delete orderData.orderDetails;
     }
-  };
+
+    console.log("📤 Gửi request tạo order với data:", orderData);
+
+    const response = await api.post(ORDER_ENDPOINT, orderData, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    console.log("📥 Response từ API createOrder:", response.data);
+
+    if (!response.data || !response.data.orderId) {
+      console.warn("⚠ API không trả về orderId, thử lấy đơn hàng gần nhất...");
+      await new Promise(res => setTimeout(res, 200));
+      const latestOrder = await getOrderByAccount(orderData.accountId);
+
+      if (!latestOrder || latestOrder.status !== 1) {
+        console.error("❌ Không có đơn hàng hợp lệ! API createOrder có vấn đề.");
+        return null;
+      }
+
+      return latestOrder;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi tạo đơn hàng:", error.response?.data || error.message);
+    return null;
+  }
+};
+
   
   
   
@@ -74,14 +78,20 @@ export const deleteOrder = async (id) => {
     }
 };
 
-export const changeStatus = async (id, status) => {
-    try {
-        const response = await api.patch(`${ORDER_ENDPOINT}/change-status/${id}`, status);
-        return response.data || null;
-    } catch {
-        return null;
-    }
+export const changeStatus = async (orderId, status = 2) => {
+  try {
+      const response = await api.put(`/orders/${orderId}`, {
+          status,
+          cancelReason: null
+      });
+
+      return response.data || null;
+  } catch (error) {
+      console.error(`❌ Lỗi cập nhật trạng thái đơn hàng ${orderId}:`, error.response?.data || error.message);
+      throw error;
+  }
 };
+
 
 export const getLatestOrderByAccount = async (accountId) => {
     try {

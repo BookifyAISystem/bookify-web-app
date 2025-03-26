@@ -36,22 +36,23 @@ export const getOrderDetailsByOrderId = async (orderId) => {
     }
 };
 
-export const createOrderDetail = async (orderDetail) => {
+export const createOrderDetail = async (orderId, orderDetail) => {
     try {
-        if (!orderDetail || !orderDetail.orderId || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
-            return null; // Bỏ qua log lỗi nếu dữ liệu không hợp lệ
-        }
-
-        const response = await api.post(ORDER_DETAIL_ENDPOINT, orderDetail);
-        return response.data || null;
-    } catch (error) {
-        // Kiểm tra nếu là lỗi 500 thì không log ra console
-        if (error.response?.status !== 500) {
-            console.error("❌ Lỗi API createOrderDetail:", error.response?.data || error.message);
-        }
+      if (!orderId || !orderDetail || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
+        console.error("❌ Dữ liệu tạo OrderDetail không hợp lệ!");
         return null;
+      }
+  
+      const response = await api.post(`/orders/${orderId}/order-details`, orderDetail);
+      return response.data || null;
+    } catch (error) {
+      console.error("❌ Lỗi API createOrderDetail:", error.response?.data || error.message);
+      return null;
     }
-};
+  };
+  
+  
+
 
 
 export const updateOrderDetail = async (id, orderDetail) => {

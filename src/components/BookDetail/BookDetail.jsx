@@ -33,65 +33,76 @@ const BookDetail = () => {
       alert("Vui lòng đăng nhập để thêm vào giỏ hàng.");
       return;
     }
-
+  
     try {
-        let order = await getOrderByAccount(accountId);
-        let isNewOrder = false;
-
-        if (!order || !order.orderId || order.status !== 1) {
-            console.log("🚀 Tạo đơn hàng mới...");
-            order = await createOrder({
-                accountId: accountId,
-                voucherId: null,
-                orderDetails: [],
-            });
-
-            isNewOrder = true;
-            await new Promise(res => setTimeout(res, 500));
-
-            order = await getOrderByAccount(accountId);
-            if (!order || !order.orderId) {
-                alert("Không thể tạo đơn hàng mới. Vui lòng thử lại.");
-                return;
+      let order = await getOrderByAccount(accountId);
+      let isNewOrder = false;
+  
+      if (!order || !order.orderId || order.status !== 1) {
+        console.log("🚀 Tạo đơn hàng mới...");
+        order = await createOrder({
+          accountId: accountId,
+          voucherId: null,
+          orderDetails: [
+            {
+              bookId: book.bookId,
+              quantity: quantity,
+              price: book.price
             }
+          ]
+        });
+  
+        isNewOrder = true;
+  
+        // Đợi backend xử lý xong
+        await new Promise((res) => setTimeout(res, 500));
+  
+        // Lấy lại đơn hàng mới tạo
+        order = await getOrderByAccount(accountId);
+        if (!order || !order.orderId) {
+          alert("Không thể tạo đơn hàng mới. Vui lòng thử lại.");
+          return;
         }
-
-        const orderId = order.orderId;
-        console.log(`✅ Đơn hàng hợp lệ có ID: ${orderId}`);
-
-        let orderDetails = await getOrderDetailsByOrderId(orderId);
-        if (!Array.isArray(orderDetails)) orderDetails = [];
-
-        let existingItem = orderDetails.find(detail => detail.bookId === book.bookId && detail.orderId === orderId);
-
-        if (existingItem) {
-            await updateOrderDetail(existingItem.orderDetailId, {
-                orderId: orderId,
-                bookId: book.bookId,
-                quantity: existingItem.quantity + 1,
-                price: book.price,
-                status: 1
-            });
-        } else {
-            await createOrderDetail({
-                orderId: orderId,
-                bookId: book.bookId,
-                quantity: 1,
-                price: book.price,
-                status: 1
-            });
-
-            await new Promise(res => setTimeout(res, 500));
-        }
-
-        alert(`🎉 Đã thêm sản phẩm vào giỏ hàng!`);
+  
+        console.log("✅ Đã tạo đơn hàng mới với sản phẩm!");
+        alert("🎉 Đã thêm sản phẩm vào giỏ hàng!");
+        return; // ⛔ Không cần chạy createOrderDetail nữa
+      }
+  
+      const orderId = order.orderId;
+      console.log(`✅ Đơn hàng hợp lệ có ID: ${orderId}`);
+  
+      let orderDetails = await getOrderDetailsByOrderId(orderId);
+      if (!Array.isArray(orderDetails)) orderDetails = [];
+  
+      let existingItem = orderDetails.find(
+        (detail) => detail.bookId === book.bookId && detail.orderId === orderId
+      );
+  
+      if (existingItem) {
+        await updateOrderDetail(existingItem.orderDetailId, {
+          orderId: orderId,
+          bookId: book.bookId,
+          quantity: existingItem.quantity + quantity,
+          price: book.price,
+          status: 1
+        });
+      } else {
+        await createOrderDetail(order.orderId, {
+          bookId: book.bookId,
+          quantity: quantity,
+          price: book.price
+        });
+  
+        await new Promise((res) => setTimeout(res, 500));
+      }
+  
+      alert(`🎉 Đã thêm sản phẩm vào giỏ hàng!`);
     } catch (error) {
-        console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
-        alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+      console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
+      alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
   };
-
-  
   
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (!book) return <p>Không tìm thấy sách!</p>;
