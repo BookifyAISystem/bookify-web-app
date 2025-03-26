@@ -6,7 +6,8 @@ export const getAllOrders = async () => {
     try {
         const response = await api.get(ORDER_ENDPOINT);
         return response.data || [];
-    } catch {
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách đơn hàng:", error);
         return [];
     }
 };
@@ -78,18 +79,27 @@ export const deleteOrder = async (id) => {
     }
 };
 
-export const changeStatus = async (orderId, status = 2) => {
-  try {
-      const response = await api.put(`/orders/${orderId}`, {
-          status,
-          cancelReason: null
-      });
+// export const changeStatus1 = async (orderId, status = 2) => {
+//   try {
+//       const response = await api.put(`/orders/${orderId}`, {
+//           status,
+//           cancelReason: null
+//       });
 
-      return response.data || null;
-  } catch (error) {
-      console.error(`❌ Lỗi cập nhật trạng thái đơn hàng ${orderId}:`, error.response?.data || error.message);
-      throw error;
-  }
+//       return response.data || null;
+//   } catch (error) {
+//       console.error(`❌ Lỗi cập nhật trạng thái đơn hàng ${orderId}:`, error.response?.data || error.message);
+//       throw error;
+//   }
+// };
+
+export const changeStatus = async (id, status) => {
+    try {
+        const response = await api.patch(`${ORDER_ENDPOINT}/${id}/change-status/`, status);
+        return response.data || null;
+    } catch {
+        return null;
+    }
 };
 
 
@@ -170,8 +180,6 @@ export const getOrdersByAccount = async (accountId, status) => {
     }
 };
 
-
-
 export const getOrderDetailsByOrderId = async (orderId) => {
     try {
         const response = await api.get(`${ORDER_ENDPOINT}/${orderId}`);
@@ -190,3 +198,32 @@ export const updateOrderTotal = async (orderId, total) => {
     }
   };
   
+
+export const getOrderWithDetails = async (orderId) => {
+    try {
+        const order = await getOrderById(orderId);
+        if (!order) return null;
+
+        // Get book details for each order detail
+        const orderDetailsWithBooks = await Promise.all(
+            order.orderDetails.map(async (detail) => {
+                const bookResponse = await api.get(`/books/${detail.bookId}`);
+                const book = bookResponse.data;
+                return {
+                    ...detail,
+                    bookName: book.name,
+                    bookImage: book.image,
+                    author: book.author
+                };
+            })
+        );
+
+        return {
+            ...order,
+            orderDetails: orderDetailsWithBooks
+        };
+    } catch (error) {
+        console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
+        return null;
+    }
+};

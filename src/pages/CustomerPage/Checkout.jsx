@@ -77,12 +77,30 @@ const Checkout = () => {
   const handlePayment = async () => {
     try {
       await changeStatus(orderId, 2);
-      alert("Thanh toán thành công qua " + paymentMethod);
-      navigate("/");
+      if (paymentMethod === "VNPay") {
+        // Tạo URL thanh toán VNPay từ backend
+        const response = await fetch(`https://localhost:7088/api/v1/Vnpay/CreatePaymentUrlByOrder?orderId=${orderId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        
+        if (!response.ok) throw new Error('Lỗi khi tạo URL thanh toán VNPay.');
+  
+        const paymentUrl = await response.text();
+  
+        // Chuyển hướng qua VNPay
+        window.location.href = paymentUrl;
+      } else {
+        alert("Thanh toán thành công qua " + paymentMethod);
+        navigate("/");
+      }
     } catch (error) {
+      console.error("Lỗi khi thực hiện thanh toán:", error);
       alert("Lỗi khi thực hiện thanh toán.");
     }
   };
+  
 
   return (
     <div className="checkout">

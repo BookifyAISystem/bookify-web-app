@@ -31,6 +31,10 @@ import SupportPage from "../layouts/Footer/SupportPage";
 import ServicePage from "../layouts/Footer/ServicePage";
 import Checkout from "../pages/CustomerPage/Checkout";
 import OrderDetail from "../components/OrderDetail/OrderDetail";
+import Orders from "../components/AdminComponents/Orders/Orders";
+import PaymentResult from "../pages/CustomerPage/PaymentResult";
+import BookReader from "../components/BookReader/BookReader";
+import FeatureNotDeveloped from "../components/NotDeveloped/NotDeveloped";
 
 const RoutePath = () => {
   return (
@@ -40,6 +44,7 @@ const RoutePath = () => {
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
           <Route path="book/:id" element={<BookDetail />} /> 
+          <Route path="book-reader/:id" element={<BookReader />} />
           <Route path="profile/:id" element={<ProfileView />} />
           <Route path="category" element={<CategoryCustomer />} />  
           <Route path="bookstore" element={<BookStore />} /> 
@@ -50,6 +55,7 @@ const RoutePath = () => {
           <Route path="support" element={<SupportPage />} />
           <Route path="service" element={<ServicePage />} />
           <Route path="order/:orderId" element={<OrderDetail />} />
+          <Route path="payment-result" element={<PaymentResult />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
@@ -70,11 +76,13 @@ const RoutePath = () => {
           <Route path="users/:id" element={<User />} />
           <Route path="books" element={<Books />} />
           <Route path="books/:id" element={<Book />} />
+          <Route path="orders" element={<Orders />} />
           <Route path="roles" element={<Roles />} />
           <Route path="notes" element={<NoteAdmin />} />
         </Route>
 
         <Route path="*" element={<ErrorPage />} /> 
+        <Route path="/not-developed" element={<FeatureNotDeveloped />} />
       </Routes>
     </BrowserRouter>
   );

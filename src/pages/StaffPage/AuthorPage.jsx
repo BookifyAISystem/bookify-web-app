@@ -48,6 +48,10 @@ const AuthorPage = () => {
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [editLoading, setEditLoading] = useState(false);
     const [editingAuthor, setEditingAuthor] = useState(null);
+    const [deletingAuthorId, setDeletingAuthorId] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [authorToDelete, setAuthorToDelete] = useState(null);
 
     useEffect(() => {
         fetchAuthors();
@@ -120,68 +124,157 @@ const AuthorPage = () => {
             setEditLoading(true);
             console.log('Submitting edit for author:', editingAuthor.authorId, values);
             
-            const response = await updateAuthor(editingAuthor.authorId, {
-                authorName: values.authorName,
-                content: values.content,
-                status: editingAuthor.status // Preserve the existing status
-            });
+            // Make sure the authorId is consistently provided
+            if (values instanceof FormData) {
+                // For FormData, ensure authorId is set properly
+                values.set('authorId', editingAuthor.authorId.toString());
+            } else {
+                // For regular objects, add authorId
+                values.authorId = editingAuthor.authorId;
+            }
+            
+            // Pass the FormData object directly to updateAuthor
+            const response = await updateAuthor(editingAuthor.authorId, values);
 
             if (response) {
                 message.success('Cập nhật tác giả thành công!');
                 setIsEditModalVisible(false);
-                await fetchAuthors();
+                await fetchAuthors(); // Refresh the list
             }
         } catch (error) {
             console.error('Error updating author:', error);
-            message.error('Có lỗi xảy ra khi cập nhật tác giả!');
+            if (error.response?.data?.message) {
+                message.error(`Lỗi: ${error.response.data.message}`);
+            } else {
+                message.error('Có lỗi xảy ra khi cập nhật tác giả!');
+            }
         } finally {
             setEditLoading(false);
         }
     };
 
-    const handleDelete = async (authorId) => {
-        if (!authorId) {
+    const handleDelete = (author) => {
+        if (!author || !author.authorId) {
             message.error('ID tác giả không hợp lệ!');
             return;
         }
-    
+
+        console.log("Delete button clicked for:", author.authorName, "ID:", author.authorId);
+        
+        // Set up our custom delete modal
+        setAuthorToDelete(author);
+        setIsDeleteModalVisible(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!authorToDelete) return;
+        
+        try {
+            setDeleteLoading(true);
+            
+            // First check if author has books
+            console.log('Checking if author has books...');
+            const hasBooks = await checkAuthorHasBooks(authorToDelete.authorId);
+            
+            if (hasBooks) {
+                message.warning('Không thể xóa tác giả đang có sách liên kết!');
+                setIsDeleteModalVisible(false);
+                return;
+            }
+            
+            console.log("Attempting to delete author:", {
+                id: authorToDelete.authorId,
+                name: authorToDelete.authorName
+            });
+            
+            const result = await deleteAuthor(authorToDelete.authorId);
+            console.log("Delete result:", result);
+            
+            if (result) {
+                message.success(`Đã xóa tác giả "${authorToDelete.authorName}" thành công`);
+                
+                // Update the local state
+                setAuthors(prev => prev.filter(author => author.authorId !== authorToDelete.authorId));
+                setSelectedRowKeys(prev => prev.filter(key => key !== authorToDelete.authorId));
+                setIsDeleteModalVisible(false);
+                setAuthorToDelete(null);
+            } else {
+                message.error(`Xóa tác giả "${authorToDelete.authorName}" thất bại: Không có kết quả trả về`);
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+            const errorMsg = error.response?.data?.message || error.message || 'Lỗi không xác định';
+            message.error(`Xóa tác giả thất bại: ${errorMsg}`);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
+
+    const cancelDelete = () => {
+        setIsDeleteModalVisible(false);
+        setAuthorToDelete(null);
+    };
+
+    const handleBatchDelete = () => {
+        if (selectedRowKeys.length === 0) {
+            message.warn('Vui lòng chọn ít nhất một tác giả để xóa');
+            return;
+        }
+
         Modal.confirm({
-            title: 'Xác nhận xóa',
-            content: 'Bạn có chắc chắn muốn xóa tác giả này không?',
-            okText: 'Xóa',
+            title: 'Xác nhận xóa hàng loạt',
+            content: `Bạn có chắc chắn muốn xóa ${selectedRowKeys.length} tác giả đã chọn không?`,
+            okText: 'Xóa tất cả',
             okType: 'danger',
             cancelText: 'Hủy',
             onOk: async () => {
                 try {
                     setLoading(true);
-                    
-                    // First check if author has books
-                    const hasBooks = await checkAuthorHasBooks(authorId);
-                    if (hasBooks) {
-                        message.warning('Không thể xóa tác giả đang có sách!');
-                        return;
+                    let successCount = 0;
+                    let errorCount = 0;
+                    let hasBookCount = 0;
+
+                    // Process each author sequentially
+                    for (const authorId of selectedRowKeys) {
+                        try {
+                            // Check if author has books
+                            const hasBooks = await checkAuthorHasBooks(authorId);
+                            if (hasBooks) {
+                                hasBookCount++;
+                                continue; // Skip this author
+                            }
+
+                            // Proceed with deletion
+                            await deleteAuthor(authorId);
+                            successCount++;
+                        } catch (error) {
+                            console.error(`Error deleting author ${authorId}:`, error);
+                            errorCount++;
+                        }
                     }
-    
-                    // Proceed with deletion
-                    await deleteAuthor(authorId);
-                    
-                    // Update local state after successful deletion
-                    setAuthors(prev => prev.filter(author => author.authorId !== authorId));
-                    setSelectedRowKeys(prev => prev.filter(key => key !== authorId));
-                    message.success('Xóa tác giả thành công!');
-                    
-                } catch (error) {
-                    console.error('Error deleting author:', error);
-                    // Handle specific error cases
-                    if (error.response?.status === 400) {
-                        message.error(error.response.data.message || 'Không thể xóa tác giả này!');
-                    } else if (error.response?.status === 404) {
-                        message.error('Không tìm thấy tác giả!');
+
+                    // Update local state after all operations
+                    if (successCount > 0) {
+                        setAuthors(prev => prev.filter(author => !selectedRowKeys.includes(author.authorId)));
+                        setSelectedRowKeys([]);
+                    }
+
+                    // Show result message
+                    if (successCount > 0 && (errorCount > 0 || hasBookCount > 0)) {
+                        message.warning(`Đã xóa ${successCount} tác giả, ${errorCount} lỗi, ${hasBookCount} tác giả có sách liên kết không thể xóa.`);
+                    } else if (successCount > 0) {
+                        message.success(`Đã xóa thành công ${successCount} tác giả!`);
+                    } else if (hasBookCount > 0) {
+                        message.warning(`Không thể xóa: ${hasBookCount} tác giả có sách liên kết.`);
                     } else {
-                        message.error('Có lỗi xảy ra khi xóa tác giả!');
+                        message.error('Không thể xóa các tác giả đã chọn!');
                     }
+                } catch (error) {
+                    console.error('Error in batch delete:', error);
+                    message.error('Có lỗi xảy ra khi xóa tác giả!');
                 } finally {
                     setLoading(false);
+                    await fetchAuthors(); // Refresh to ensure UI is in sync
                 }
             }
         });
@@ -243,11 +336,10 @@ const AuthorPage = () => {
                     </Tooltip>
                     <Tooltip title="Xóa">
                         <Button 
-                            danger
+                            danger 
                             icon={<DeleteOutlined />} 
                             size="small"
-                            onClick={() => handleDelete(record.authorId)}
-                            loading={loading && selectedRowKeys.includes(record.authorId)}
+                            onClick={() => handleDelete(record)}
                         />
                     </Tooltip>
                 </Space>
@@ -299,9 +391,19 @@ const AuthorPage = () => {
                                     type="primary" 
                                     icon={<PlusOutlined />}
                                     onClick={() => setIsAddModalVisible(true)}
+                                    style={{ marginRight: 8 }}
                                 >
                                     Thêm tác giả mới
                                 </Button>
+                                {selectedRowKeys.length > 0 && (
+                                    <Button 
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={handleBatchDelete}
+                                    >
+                                        Xóa {selectedRowKeys.length} tác giả
+                                    </Button>
+                                )}
                             </div>
                         </div>
 
@@ -319,6 +421,25 @@ const AuthorPage = () => {
                     </Card>
                 </Col>
             </Row>
+            <Modal
+                title="Xác nhận xóa"
+                open={isDeleteModalVisible}
+                onOk={confirmDelete}
+                onCancel={cancelDelete}
+                okText="Xóa"
+                cancelText="Hủy"
+                okButtonProps={{ 
+                    danger: true, 
+                    loading: deleteLoading 
+                }}
+                cancelButtonProps={{ 
+                    disabled: deleteLoading 
+                }}
+            >
+                {authorToDelete && (
+                    <p>Bạn có chắc chắn muốn xóa tác giả "{authorToDelete.authorName}" không?</p>
+                )}
+            </Modal>
             <AddAuthorModal
                 visible={isAddModalVisible}
                 onCancel={() => setIsAddModalVisible(false)}

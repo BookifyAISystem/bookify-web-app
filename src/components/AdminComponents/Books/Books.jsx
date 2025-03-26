@@ -56,7 +56,7 @@ const Books = () => {
     const fetchBooks = async () => {
       setLoading(true);
       try {
-        const response = await getAllBooks(page + 1, pageSize);
+        const response = await getAllBooks("", page + 1, pageSize);
         if (response?.books) {
           const mappedBooks = await Promise.all(
             response.books.map(async (book) => ({
@@ -93,8 +93,7 @@ const Books = () => {
     return (
       <div className='books'>
         <div className='info'>
-          <h1>Books</h1>
-          <button onClick={() => setOpen(true)}>Add New Books</button>
+          <h1>Quản lý sách</h1>
         </div>
   
         <div className="dataTable">
@@ -140,7 +139,6 @@ const Books = () => {
               </div>
   
   
-        {open && <Add slug="books" columns={columns} setOpen={setOpen} />}
       </div>
     )
   }
