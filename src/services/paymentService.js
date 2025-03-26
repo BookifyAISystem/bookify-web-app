@@ -2,6 +2,8 @@ import api from "./apiService";
 
 const PAYMENT_ENDPOINT = "/payment";
 
+
+
 export const getAllPayments = async () => {
     try {
         const response = await api.get(PAYMENT_ENDPOINT);
