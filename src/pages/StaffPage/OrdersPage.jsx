@@ -12,7 +12,8 @@ import {
     Tag,
     Tooltip,
     Modal,
-    message
+    message,
+    Divider
 } from 'antd';
 import {
     SearchOutlined,
@@ -21,7 +22,7 @@ import {
     DeleteOutlined,
     ShoppingCartOutlined
 } from '@ant-design/icons';
-import { getAllOrders, deleteOrder, changeStatus } from "../../services/orderService";
+import { getAllOrders, deleteOrder, changeStatus, getOrderWithDetails } from "../../services/orderService";
 import moment from 'moment';
 
 const { Title, Text } = Typography;
@@ -39,6 +40,8 @@ const OrdersPage = () => {
         pageSize: 10,
         total: 0
     });
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         fetchOrders();
@@ -107,6 +110,24 @@ const OrdersPage = () => {
                 }
             }
         });
+    };
+
+    const handleViewDetails = async (record) => {
+        try {
+            setLoading(true);
+            const detailedOrder = await getOrderWithDetails(record.key);
+            if (detailedOrder) {
+                setSelectedOrder({
+                    ...record,
+                    orderDetails: detailedOrder.orderDetails
+                });
+                setIsModalVisible(true);
+            }
+        } catch (error) {
+            message.error('Không thể tải chi tiết đơn hàng');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getStatusTag = (status) => {
@@ -243,6 +264,100 @@ const OrdersPage = () => {
                     </Card>
                 </Col>
             </Row>
+
+            <Modal
+                title={`Chi tiết đơn hàng ${selectedOrder?.orderId}`}
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={[
+                    <Button key="back" onClick={() => setIsModalVisible(false)}>
+                        Đóng
+                    </Button>
+                ]}
+                width={800}
+            >
+                {selectedOrder && (
+                    <div>
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Text strong>Mã đơn hàng:</Text> <Text>{selectedOrder.orderId}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Ngày đặt:</Text> <Text>{selectedOrder.createdDate}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Tổng tiền:</Text> <Text>{selectedOrder.total}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Trạng thái:</Text> {getStatusTag(selectedOrder.status)}
+                            </Col>
+                            {selectedOrder.cancelReason && (
+                                <Col span={24}>
+                                    <Text strong>Lý do hủy:</Text> <Text>{selectedOrder.cancelReason}</Text>
+                                </Col>
+                            )}
+                        </Row>
+
+                        <Divider orientation="left">Chi tiết sản phẩm</Divider>
+                        <Table
+                            dataSource={selectedOrder.orderDetails}
+                            columns={[
+                                {
+                                    title: 'Sản phẩm',
+                                    dataIndex: 'bookName',
+                                    key: 'bookName',
+                                    render: (text, record) => (
+                                        <Space>
+                                            <img 
+                                                src={record.bookImage} 
+                                                alt={text} 
+                                                style={{ 
+                                                    width: 50, 
+                                                    height: 50, 
+                                                    objectFit: 'cover' 
+                                                }} 
+                                            />
+                                            <div>
+                                                <div>{text}</div>
+                                                <div style={{ color: '#666' }}>{record.author}</div>
+                                            </div>
+                                        </Space>
+                                    )
+                                },
+                                {
+                                    title: 'Số lượng',
+                                    dataIndex: 'quantity',
+                                    key: 'quantity',
+                                    width: 100,
+                                    align: 'right',
+                                },
+                                {
+                                    title: 'Đơn giá',
+                                    dataIndex: 'price',
+                                    key: 'price',
+                                    width: 150,
+                                    align: 'right',
+                                    render: (price) => price.toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    })
+                                },
+                                {
+                                    title: 'Thành tiền',
+                                    key: 'total',
+                                    width: 150,
+                                    align: 'right',
+                                    render: (_, record) => (record.price * record.quantity).toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    })
+                                }
+                            ]}
+                            pagination={false}
+                        />
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };
