@@ -33,6 +33,7 @@ import Checkout from "../pages/CustomerPage/Checkout";
 import OrderDetail from "../components/OrderDetail/OrderDetail";
 import Orders from "../components/AdminComponents/Orders/Orders";
 import PaymentResult from "../pages/CustomerPage/PaymentResult";
+import BookReader from "../components/BookReader/BookReader";
 
 const RoutePath = () => {
   return (
@@ -42,6 +43,7 @@ const RoutePath = () => {
           <Route index element={<HomePage />} />
           <Route path="login" element={<Auth />} />
           <Route path="book/:id" element={<BookDetail />} /> 
+          <Route path="book-reader/:id" element={<BookReader />} />
           <Route path="profile/:id" element={<ProfileView />} />
           <Route path="category" element={<CategoryCustomer />} />  
           <Route path="bookstore" element={<BookStore />} /> 
