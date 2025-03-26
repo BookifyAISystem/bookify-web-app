@@ -512,3 +512,111 @@ button:hover i {
   transform: rotate(15deg);
 }
 
+.image-generator {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* Ô nhập mô tả ảnh */
+.image-input {
+  width: 100%;
+  min-height: 50px; /* Tăng chiều cao */
+  max-height: 120px;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  resize: vertical; /* Cho phép kéo giãn */
+  overflow-y: auto; /* Bật cuộn nếu text dài */
+  word-wrap: break-word; /* Xuống dòng khi text quá dài */
+  line-height: 1.5;
+  transition: border-color 0.3s;
+}
+
+.image-input:focus {
+  border-color: #007bff; /* Đổi màu viền khi focus */
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Nút tạo ảnh */
+.generate-image-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generate-image-btn i {
+  font-size: 18px;
+}
+
+.generate-image-btn:hover {
+  background-color: #0056b3;
+}
+
+.generate-image-btn:active {
+  transform: scale(0.95);
+}
+
+.generate-image-btn:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Khi đang loading */
+.generate-image-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+
+.view-image-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #4CAF50; /* Màu xanh lá */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.view-image-btn i {
+  font-size: 18px;
+}
+
+.view-image-btn:hover {
+  background-color: #45a049;
+}
+
+.view-image-btn:active {
+  transform: scale(0.95);
+}
+
+.view-image-btn:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}

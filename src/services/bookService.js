@@ -2,7 +2,7 @@ import api from "./apiService";
 
 const BOOK_ENDPOINT = "/books";
 
-export const getAllBooks = async (query = "", pageNumber = 1, pageSize = 10, categoryId, status) => {
+export const getAllBooks = async (query = "", pageNumber = 1, pageSize = 12, categoryId, status) => {
     try {
         // Build query parameters
         const params = {
@@ -173,3 +173,13 @@ export const changeStatus = async (id, status) => {
         return null;
     }
 };
+export const getBooksByAuthors = async () => {
+    try {
+      const response = await api.get("/books/authors");
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sách theo tác giả:", error);
+      return [];
+    }
+  };
+  
