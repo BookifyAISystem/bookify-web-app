@@ -160,3 +160,22 @@ export const getOrderWithDetails = async (orderId) => {
         return null;
     }
 };
+
+export const getTotalRevenue = async () => {
+    try {
+        const response = await api.get(ORDER_ENDPOINT);
+        const orders = response.data || [];
+        
+        const total = orders.reduce((sum, order) => {
+            if (order.status === 3 || order.status === 4) {
+                return sum + order.totalAmount;
+            }
+            return sum;
+        }, 0);
+        
+        return total;
+    } catch (error) {
+        console.error("Error calculating total revenue:", error);
+        return 0;
+    }
+};
