@@ -18,7 +18,10 @@ const BookDetail = () => {
   const [generatedSummary, setGeneratedSummary] = useState("");
   const [displaySummary, setDisplaySummary] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [generatedImage, setGeneratedImage] = useState(null);
+  const [loadingImage, setLoadingImage] = useState(false);
+  
   useEffect(() => {
     const fetchBookDetail = async () => {
       const data = await getBookById(id);
@@ -147,6 +150,39 @@ const BookDetail = () => {
     setGeneratedSummary(nextSummary);
   };
 
+  const handleGenerateImage = async () => {
+    if (!imagePrompt.trim()) {
+      alert("Vui lòng nhập mô tả để tạo ảnh.");
+      return;
+    }
+  
+    setLoadingImage(true);
+    setGeneratedImage(null); // Xóa ảnh cũ
+  
+    try {
+      const response = await fetch(`http://minetsbd.fun:5002/api/v1/open-ai/generateImage?input=${encodeURIComponent(imagePrompt)}`);
+      const data = await response.json();
+      
+      console.log("📢 API Response:", data); // Debug API response
+  
+      if (data) {
+        setGeneratedImage(data);
+        console.log("✅ Cập nhật state: ", data);
+      } else {
+        alert("Không thể tạo ảnh, vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi tạo ảnh:", error);
+      alert("Đã xảy ra lỗi khi tạo ảnh.");
+    } finally {
+      setLoadingImage(false);
+    }
+  };
+  
+  
+  
+  
+
   useEffect(() => {
     let intervalId;
     let currentCharIndex = 0;
@@ -249,6 +285,33 @@ const BookDetail = () => {
               <i className="fas fa-book-open"></i>
               Xem tóm tắt
             </button>
+
+            <div className="image-generator">
+              <textarea
+                className="image-input"
+                placeholder="Nhập mô tả ảnh..."
+                value={imagePrompt}
+                onChange={(e) => setImagePrompt(e.target.value)}
+              ></textarea>
+              <button 
+                className="generate-image-btn" 
+                onClick={handleGenerateImage} 
+                disabled={loadingImage}
+              >
+                <i className="fas fa-image"></i> {loadingImage ? "Đang tạo..." : "Tạo ảnh"}
+              </button>
+
+              {/* Nút xem ảnh chỉ hiển thị khi có ảnh */}
+              {generatedImage && (
+                <button 
+                  className="view-image-btn"
+                  onClick={() => window.open(generatedImage, "_blank")}
+                >
+                  <i className="fas fa-eye"></i> Xem ảnh
+                </button>
+              )}
+            </div>
+
           </div>
         </div>
       </div>
