@@ -34,6 +34,7 @@ import OrderDetail from "../components/OrderDetail/OrderDetail";
 import Orders from "../components/AdminComponents/Orders/Orders";
 import PaymentResult from "../pages/CustomerPage/PaymentResult";
 import BookReader from "../components/BookReader/BookReader";
+import FeatureNotDeveloped from "../components/NotDeveloped/NotDeveloped";
 
 const RoutePath = () => {
   return (
@@ -81,6 +82,7 @@ const RoutePath = () => {
         </Route>
 
         <Route path="*" element={<ErrorPage />} /> 
+        <Route path="/not-developed" element={<FeatureNotDeveloped />} />
       </Routes>
     </BrowserRouter>
   );
