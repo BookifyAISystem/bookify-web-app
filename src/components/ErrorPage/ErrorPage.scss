@@ -1,0 +1,42 @@
+/* src/components/ErrorPage/ErrorPage.css */
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .error-page h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #ff4d4f;
+  }
+  
+  .error-page p {
+    font-size: 1.5em;
+    color: #555;
+    max-width: 600px;
+    text-align: center;
+    line-height: 1.6;
+  }
+  
+  .home-button {
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #1890ff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-button:hover {
+    background-color: #40a9ff;
+  }

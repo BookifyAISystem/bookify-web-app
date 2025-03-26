@@ -9,12 +9,12 @@ const menu = [
           url: "/admin",
           icon: "/home.svg",
         },
-        {
-          id: 2,
-          title: "Thông tin cá nhân",
-          url: "/admin/users/1",
-          icon: "/user.svg",
-        },
+        // {
+        //   id: 2,
+        //   title: "Thông tin cá nhân",
+        //   url: "/admin/users/1",
+        //   icon: "/user.svg",
+        // },
       ],
     },
     {
@@ -48,7 +48,7 @@ const menu = [
         {
           id: 5,
           title: "Bài đăng",
-          url: "/admin/posts",
+          url: "/not-developed",
           icon: "/post2.svg",
         },
       ],
@@ -78,7 +78,7 @@ const menu = [
         {
           id: 4,
           title: "Lịch",
-          url: "/",
+          url: "/not-developed",
           icon: "/calendar.svg",
         },
       ],
@@ -90,13 +90,13 @@ const menu = [
         {
           id: 1,
           title: "Cài đặt",
-          url: "/",
+          url: "/not-developed",
           icon: "/setting.svg",
         },
         {
           id: 2,
           title: "Backups",
-          url: "/",
+          url: "/not-developed",
           icon: "/backup.svg",
         },
       ],
