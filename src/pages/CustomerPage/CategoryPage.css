@@ -33,3 +33,22 @@
   background-color: #e63946;
   color: #fff;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+}
+
+.page-button.active {
+  background-color: #e74c3c;
+  color: white;
+  border-color: #e74c3c;
+}

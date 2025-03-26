@@ -328,13 +328,19 @@ const handleRemoveFromWishlist = async (wishlistDetailId) => {
       ) : myBooks.length > 0 ? (
         <div className="book-list">
           {myBooks.map(book => (
-            <div key={book.bookId} className="book-item">
-              <img src={book.bookImage} alt={book.bookName} className="book-thumbnail" />
-              <div className="book-info">
-                <strong>{book.bookName}</strong>
-                <p>Số lượng: {book.quantity}</p>
-              </div>
+            <div
+            key={book.bookId}
+            className="book-item"
+            onClick={() => navigate(`/book-reader/${book.bookId}`)}
+            style={{ cursor: 'pointer' }} // thêm hiệu ứng chuột
+          >
+            <img src={book.bookImage} alt={book.bookName} className="book-thumbnail" />
+            <div className="book-info">
+              <strong>{book.bookName}</strong>
+              <p>Số lượng: {book.quantity}</p>
             </div>
+          </div>
+          
           ))}
         </div>
       ) : (

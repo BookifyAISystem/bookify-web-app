@@ -32,6 +32,11 @@
 .book-card:hover {
   transform: translateY(-3px);
 }
+.pagination-wrapper {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
 
 @media (max-width: 1400px) {
   .book-grid {
