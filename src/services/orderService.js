@@ -22,20 +22,44 @@ export const getOrderById = async (id) => {
 };
 
 export const createOrder = async (orderData) => {
-    try {
-        const response = await api.post(ORDER_ENDPOINT, orderData, {
-            headers: { "Content-Type": "application/json" },
-        });
-
-        if (!response.data || !response.data.orderId) {
-            return await getLatestOrderByAccount(orderData.accountId);
-        }
-
-        return response.data;
-    } catch {
-        return null;
+  try {
+    // Xoá orderDetails nếu rỗng
+    if (Array.isArray(orderData.orderDetails) && orderData.orderDetails.length === 0) {
+      delete orderData.orderDetails;
     }
+
+    console.log("📤 Gửi request tạo order với data:", orderData);
+
+    const response = await api.post(ORDER_ENDPOINT, orderData, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    console.log("📥 Response từ API createOrder:", response.data);
+
+    if (!response.data || !response.data.orderId) {
+      console.warn("⚠ API không trả về orderId, thử lấy đơn hàng gần nhất...");
+      await new Promise(res => setTimeout(res, 200));
+      const latestOrder = await getOrderByAccount(orderData.accountId);
+
+      if (!latestOrder || latestOrder.status !== 1) {
+        console.error("❌ Không có đơn hàng hợp lệ! API createOrder có vấn đề.");
+        return null;
+      }
+
+      return latestOrder;
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi tạo đơn hàng:", error.response?.data || error.message);
+    return null;
+  }
 };
+
+  
+  
+  
+  
 
 export const updateOrder = async (id, order) => {
     try {
@@ -55,6 +79,20 @@ export const deleteOrder = async (id) => {
     }
 };
 
+// export const changeStatus1 = async (orderId, status = 2) => {
+//   try {
+//       const response = await api.put(`/orders/${orderId}`, {
+//           status,
+//           cancelReason: null
+//       });
+
+//       return response.data || null;
+//   } catch (error) {
+//       console.error(`❌ Lỗi cập nhật trạng thái đơn hàng ${orderId}:`, error.response?.data || error.message);
+//       throw error;
+//   }
+// };
+
 export const changeStatus = async (id, status) => {
     try {
         const response = await api.patch(`${ORDER_ENDPOINT}/${id}/change-status/`, status);
@@ -64,23 +102,41 @@ export const changeStatus = async (id, status) => {
     }
 };
 
+
 export const getLatestOrderByAccount = async (accountId) => {
     try {
-        const response = await api.get(ORDER_ENDPOINT);
-        const orders = response.data || [];
-
-        if (!orders.length) return null;
-
-        return orders
-            .filter(order => order.accountId === accountId && order.status === 1)
-            .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))[0] || null;
-    } catch {
+      const response = await api.get(`/api/v1/orders/account/${accountId}`);
+      
+      if (response.status === 404) {
+        console.warn("⚠ API không tìm thấy đơn hàng nào.");
         return null;
+      }
+  
+      const orders = response.data;
+  
+      if (!Array.isArray(orders)) {
+        console.error("❌ API trả về dữ liệu không hợp lệ:", orders);
+        return null;
+      }
+  
+      // Chỉ lấy đơn hàng chưa thanh toán
+      const validOrder = orders.find(order => order.status === 1);
+      
+      if (!validOrder) {
+        console.warn("⚠ Không tìm thấy đơn hàng hợp lệ.");
+        return null;
+      }
+  
+      return validOrder;
+    } catch (error) {
+      console.error("❌ Lỗi khi lấy đơn hàng gần nhất:", error);
+      return null;
     }
-};
+  };
+  
+  
 
-//lấy ra 1 đơn mới nhất
-export const getOrderByAccount = async (accountId) => {
+  export const getOrderByAccount = async (accountId) => {
     try {
         const response = await api.get(`${ORDER_ENDPOINT}/account/${accountId}`);
         const orders = response.data || [];
@@ -89,7 +145,7 @@ export const getOrderByAccount = async (accountId) => {
 
         if (!orders.length) return null;
 
-        // Lấy đơn hàng mới nhất có status = 1
+        // 🔥 Lọc đơn hàng mới nhất có status = 1
         const latestOrder = orders
             .filter(order => order.status === 1)
             .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))[0];
@@ -101,6 +157,7 @@ export const getOrderByAccount = async (accountId) => {
         return null;
     }
 };
+
 
 //lấy ra list đơn
 export const getOrdersByAccount = async (accountId, status) => {
@@ -131,6 +188,16 @@ export const getOrderDetailsByOrderId = async (orderId) => {
         return [];
     }
 };
+export const updateOrderTotal = async (orderId, total) => {
+    try {
+      const response = await api.put(`${ORDER_ENDPOINT}/${orderId}`, { total });
+      return response.data || null;
+    } catch (error) {
+      console.error(`❌ Lỗi khi cập nhật tổng tiền đơn hàng ${orderId}:`, error);
+      return null;
+    }
+  };
+  
 
 export const getOrderWithDetails = async (orderId) => {
     try {

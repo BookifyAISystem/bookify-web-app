@@ -11,8 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 const ShoppingCart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
   const [accountId, setAccountId] = useState(0);
   const navigate = useNavigate();
 
@@ -23,17 +21,22 @@ const ShoppingCart = () => {
       }
     }, []);
 
-
-  const fetchCartData = async () => {
-    if (accountId === 0) return;
-    try {
-      const order = await getOrderByAccount(accountId);
-      // const orderDetails = await getAllOrderDetails();
-      const orderDetails = order.orderDetails;
-      if (orderDetails) {
-        const validOrders = orderDetails.filter(order => order.status === 1);
+    const fetchCartData = async () => {
+      if (accountId === 0) return;
+      try {
+        const order = await getOrderByAccount(accountId);
+        console.log("🚀 API Order Data:", order); // Debug API
+        if (!order || !order.orderDetails) {
+          console.log("⚠ Không có orderDetails hoặc order null.");
+          setCartItems([]); // Đảm bảo set state rỗng thay vì báo lỗi
+          return;
+        }
+  
+        const orderDetails = order.orderDetails.filter(order => order.status === 1);
+        console.log("🛒 Order Details:", orderDetails); // Debug đơn hàng hợp lệ
+  
         const itemsWithBookDetails = await Promise.all(
-          validOrders.map(async (order) => {
+          orderDetails.map(async (order) => {
             const book = await getBookById(order.bookId);
             return book
               ? {
@@ -49,34 +52,23 @@ const ShoppingCart = () => {
               : null;
           })
         );
+  
         setCartItems(itemsWithBookDetails.filter(item => item !== null));
+      } catch (error) {
+        console.error("❌ Lỗi khi gọi API giỏ hàng:", error);
+        alert("Lỗi khi lấy dữ liệu giỏ hàng.");
       }
-    } catch (error) {
-      alert("Lỗi khi lấy dữ liệu giỏ hàng.");
-    }
   };
+  
 
   useEffect(() => {
     fetchCartData();
   }, [accountId]);
 
-  const totalAmount = selectedItems.reduce(
+  const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
-  const handleSelectItem = (item) => {
-    setSelectedItems(prevSelected =>
-      prevSelected.some((selected) => selected.orderDetailId === item.orderDetailId)
-        ? prevSelected.filter(selected => selected.orderDetailId !== item.orderDetailId)
-        : [...prevSelected, item]
-    );
-  };
-
-  const handleSelectAll = () => {
-    setSelectedItems(selectAll ? [] : [...cartItems]);
-    setSelectAll(!selectAll);
-  };
 
   const handleQuantityChange = async (item, type) => {
     const newQuantity = type === "increase" ? item.quantity + 1 : Math.max(1, item.quantity - 1);
@@ -113,26 +105,19 @@ const ShoppingCart = () => {
   };
 
   const handleCheckout = async () => {
-    if (selectedItems.length === 0) {
-      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+    if (cartItems.length === 0) {
+      alert("Giỏ hàng của bạn đang trống!");
       return;
     }
 
     try {
       const order = await getOrderByAccount(accountId);
       const orderId = order.orderId;
-      console.log("🛒 Đơn hàng cần thanh toán:", orderId);
-      // const response = await changeStatus(orderId, 2);
-      // if (response) {
       navigate(`${orderId}`);
-      // } else {
-      //   alert("Lỗi khi thanh toán.");
-      // }
     } catch (error) {
       alert("Lỗi khi thanh toán.");
     }
   };
-
 
   return (
     <div className="shopping-container">
@@ -140,10 +125,7 @@ const ShoppingCart = () => {
         <h2>🛒 GIỎ HÀNG ({cartItems.length} sản phẩm)</h2>
 
         <div className="cart-header">
-          <div className="column checkbox-column">
-            <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
-          </div>
-          <div className="column product-column">Chọn tất cả ({cartItems.length} sản phẩm)</div>
+          <div className="column product-column">Sản phẩm</div>
           <div className="column quantity-column">Số lượng</div>
           <div className="column price-column">Thành tiền</div>
           <div className="column delete-column"></div>
@@ -154,13 +136,6 @@ const ShoppingCart = () => {
         ) : (
           cartItems.map((item) => (
             <div key={item.orderDetailId} className="cart-item">
-              <div className="column checkbox-column">
-                <input
-                  type="checkbox"
-                  checked={selectedItems.some(selected => selected.orderDetailId === item.orderDetailId)}
-                  onChange={() => handleSelectItem(item)}
-                />
-              </div>
               <div className="column product-column">
                 <img src={item.image} alt={item.title} className="book-image" />
                 <div className="book-info">

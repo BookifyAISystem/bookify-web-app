@@ -77,14 +77,14 @@ const Checkout = () => {
   const handlePayment = async () => {
     try {
       await changeStatus(orderId, 2);
-  
       if (paymentMethod === "VNPay") {
         // Tạo URL thanh toán VNPay từ backend
         const response = await fetch(`https://localhost:7088/api/v1/Vnpay/CreatePaymentUrlByOrder?orderId=${orderId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
-  
+
+        
         if (!response.ok) throw new Error('Lỗi khi tạo URL thanh toán VNPay.');
   
         const paymentUrl = await response.text();
