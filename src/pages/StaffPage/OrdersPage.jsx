@@ -24,6 +24,7 @@ import {
 } from '@ant-design/icons';
 import { getAllOrders, deleteOrder, changeStatus, getOrderWithDetails } from "../../services/orderService";
 import moment from 'moment';
+import { color } from '@mui/system';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -132,10 +133,10 @@ const OrdersPage = () => {
 
     const getStatusTag = (status) => {
         const statusConfig = {
-            0: { color: 'processing', text: 'Chờ xác nhận' },
-            1: { color: 'warning', text: 'Đang xử lý' },
-            2: { color: 'success', text: 'Hoàn thành' },
-            3: { color: 'error', text: 'Đã hủy' }
+            0: { color: 'error', text: 'Đã hủy' },
+            2: { color: 'success', text: 'Đặt hàng thành công' },
+            3: { color: 'warning', text: 'Thanh toán thành công' },
+            4: { color: 'success', text: 'Đã hoàn thành' }
         };
         const config = statusConfig[status] || { color: 'default', text: 'Không xác định' };
         return <Tag color={config.color}>{config.text}</Tag>;
@@ -183,12 +184,12 @@ const OrdersPage = () => {
                         value={record.status}
                         style={{ width: 120 }}
                         onChange={(value) => handleStatusChange(record.key, value)}
-                        disabled={record.status === 2 || record.status === 3}
+                        disabled={record.status === 4 || record.status === 0}
                     >
-                        <Option value={0}>Chờ xác nhận</Option>
-                        <Option value={1}>Đang xử lý</Option>
-                        <Option value={2}>Hoàn thành</Option>
-                        <Option value={3}>Đã hủy</Option>
+                        <Option value={0}>Đã hủy</Option>
+                        <Option value={2}>Đặt hàng thành công</Option>
+                        <Option value={3}>Thanh toán thành công</Option>
+                        <Option value={4}>Đã hoàn thành</Option>
                     </Select>
                     <Tooltip title="Xóa">
                         <Button 
@@ -196,7 +197,7 @@ const OrdersPage = () => {
                             icon={<DeleteOutlined />} 
                             size="small"
                             onClick={() => handleDelete(record.key)}
-                            disabled={record.status === 2}
+                            disabled={record.status === 3}
                         />
                     </Tooltip>
                 </Space>
@@ -236,10 +237,10 @@ const OrdersPage = () => {
                                             onChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
                                         >
                                             <Option value="all">Tất cả trạng thái</Option>
-                                            <Option value="0">Chờ xác nhận</Option>
-                                            <Option value="1">Đang xử lý</Option>
-                                            <Option value="2">Hoàn thành</Option>
-                                            <Option value="3">Đã hủy</Option>
+                                            <Option value="0">Đã hủy</Option>
+                                            <Option value="2">Đặt hàng thành công</Option>
+                                            <Option value="3">Thanh toán thành công</Option>
+                                            <Option value="4">Đã hoàn thành</Option>
                                         </Select>
                                         <Tooltip title="Làm mới">
                                             <Button 
