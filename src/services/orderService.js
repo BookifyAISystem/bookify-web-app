@@ -56,11 +56,6 @@ export const createOrder = async (orderData) => {
   }
 };
 
-  
-  
-  
-  
-
 export const updateOrder = async (id, order) => {
     try {
         const response = await api.put(`${ORDER_ENDPOINT}/${id}`, order);
