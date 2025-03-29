@@ -9,6 +9,7 @@ import BigChartBox from '../BigChartBox/BigChartBox'
 import { getAllAccounts } from '../../../services/accountService'
 import { getAllBooks } from '../../../services/bookService'
 import { getAllOrders } from '../../../services/orderService'
+import { getAllCategories } from '../../../services/categoryService'
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -20,6 +21,7 @@ const Dashboard = () => {
     revenueStats: [],
     revenueAnalytics: []
   });
+  const [categoryData, setCategoryData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,8 +29,28 @@ const Dashboard = () => {
         const accountsResponse = await getAllAccounts();        
         const booksResponse = await getAllBooks("", 1, 1000);        
         const ordersResponse = await getAllOrders();
+        const categoriesResponse = await getAllCategories();
         
         console.log("All orders:", ordersResponse);
+        
+        // Process categories for pie chart
+        if (categoriesResponse && Array.isArray(categoriesResponse)) {
+          // Get only active categories
+          const activeCategories = categoriesResponse.filter(cat => cat.status === 1);
+          
+          // Prepare data for pie chart - limit to top 5 categories
+          const pieData = activeCategories.slice(0, 5).map((category, index) => {
+            // Generate a unique color for each category
+            const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+            return {
+              name: category.categoryName,
+              value: Math.floor(Math.random() * 500) + 100, // Random value for demonstration
+              color: colors[index % colors.length]
+            };
+          });
+          
+          setCategoryData(pieData);
+        }
         
         // Calculate total revenue from completed orders (status 4)
         let totalRevenue = 0;
@@ -155,7 +177,7 @@ const Dashboard = () => {
 
       <div className='dashboard-row'>
         <div className='dashboard-column'>
-          <PieChartBox />
+          <PieChartBox data={categoryData} title="Categories Distribution" />
         </div>
         <div className='dashboard-column'>
           <BigChartBox data={stats.revenueAnalytics} />
