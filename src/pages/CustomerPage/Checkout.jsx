@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getOrderById } from "../../services/orderService";
+import { getOrderById, changeStatus } from "../../services/orderService";
 import { updateOrderDetail } from "../../services/orderDetailService";
 import { getBookById } from "../../services/bookService";
 import { getAccountById } from "../../services/accountService";
@@ -75,18 +75,33 @@ const Checkout = () => {
   );
 
   const handlePayment = async () => {
+    // debugger;
     try {
-      await Promise.all(
-        checkoutItems.map((item) =>
-          updateOrderDetail(item.orderDetailId, { ...item, status: 3 })
-        )
-      );
-      alert("Thanh toán thành công qua " + paymentMethod);
-      navigate("/");
+      await changeStatus(orderId, 2);
+      if (paymentMethod === "VNPay") {
+        // Tạo URL thanh toán VNPay từ backend
+        const response = await fetch(`https://localhost:7088/api/v1/Vnpay/CreatePaymentUrlByOrder?orderId=${orderId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        
+        if (!response.ok) throw new Error('Lỗi khi tạo URL thanh toán VNPay.');
+  
+        const paymentUrl = await response.text();
+  
+        // Chuyển hướng qua VNPay
+        window.location.href = paymentUrl;
+      } else {
+        alert("Thanh toán thành công qua " + paymentMethod);
+        navigate("/");
+      }
     } catch (error) {
+      console.error("Lỗi khi thực hiện thanh toán:", error);
       alert("Lỗi khi thực hiện thanh toán.");
     }
   };
+  
 
   return (
     <div className="checkout">

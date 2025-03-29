@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAccountID } from "../../services/accountService";
 import { createOrder, getOrderByAccount } from "../../services/orderService";
 import { getOrderDetailsByOrderId, createOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
+
 import "./BookInforCard.css";
 
 const BookInforCard = ({ book }) => {
@@ -15,72 +16,75 @@ const BookInforCard = ({ book }) => {
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
-
+  
     const accountId = getAccountID();
     if (!accountId) {
       alert("Vui lòng đăng nhập để thêm vào giỏ hàng.");
       return;
     }
-
+  
     try {
       let order = await getOrderByAccount(accountId);
-      if (!order || !order.orderId) {
+  
+      if (!order || !order.orderId || order.status !== 1) {
+        console.log("🚀 Tạo đơn hàng mới...");
         order = await createOrder({
           accountId: accountId,
           voucherId: null,
-          orderDetails: [],
+          orderDetails: [
+            {
+              bookId: book.bookId,
+              quantity: 1,
+              price: book.price,
+            },
+          ],
         });
-
+  
+        await new Promise((res) => setTimeout(res, 500));
+        order = await getOrderByAccount(accountId);
+  
         if (!order || !order.orderId) {
-          alert("Không thể tạo đơn hàng.");
+          alert("Không thể tạo đơn hàng mới. Vui lòng thử lại.");
           return;
         }
-
-        await new Promise(resolve => setTimeout(resolve, 500));
+  
+        alert("🎉 Đã thêm sản phẩm vào giỏ hàng!");
+        return;
       }
-
-      let orderDetails = await getOrderDetailsByOrderId(order.orderId);
-      if (!orderDetails || orderDetails.length === 0) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        orderDetails = await getOrderDetailsByOrderId(order.orderId);
-      }
-
-      const existingItem = orderDetails.find(detail => detail.bookId === book.bookId);
-
+  
+      const orderId = order.orderId;
+      let orderDetails = await getOrderDetailsByOrderId(orderId);
+      if (!Array.isArray(orderDetails)) orderDetails = [];
+  
+      const existingItem = orderDetails.find(
+        (detail) => detail.bookId === book.bookId && detail.orderId === orderId
+      );
+  
       if (existingItem) {
-        const updatedData = {
-          quantity: existingItem.status === 1 ? existingItem.quantity + 1 : 1,
-          price: book.price,
-          orderId: order.orderId,
+        await updateOrderDetail(existingItem.orderDetailId, {
+          orderId: orderId,
           bookId: book.bookId,
+          quantity: existingItem.quantity + 1,
+          price: book.price,
           status: 1,
-        };
-
-        const updateResponse = await updateOrderDetail(existingItem.orderDetailId, updatedData);
-        if (!updateResponse) {
-          alert("Không thể cập nhật số lượng sản phẩm.");
-          return;
-        }
+        });
       } else {
-        const newDetail = await createOrderDetail({
-          orderId: order.orderId,
+        await createOrderDetail(orderId, {
           bookId: book.bookId,
           quantity: 1,
           price: book.price,
-          status: 1,
         });
-
-        if (!newDetail) {
-          alert("Không thể thêm sản phẩm vào giỏ hàng.");
-          return;
-        }
+  
+        await new Promise((res) => setTimeout(res, 500));
       }
-
+  
       alert("🎉 Sản phẩm đã được thêm vào giỏ hàng!");
     } catch (error) {
+      console.error("❌ Lỗi khi thêm vào giỏ hàng:", error);
       alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
   };
+  
 
   return (
     <div className="book-card" onClick={handleClick}>

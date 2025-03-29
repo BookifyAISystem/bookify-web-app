@@ -23,42 +23,51 @@ export const getOrderDetailById = async (id) => {
 export const getOrderDetailsByOrderId = async (orderId) => {
     try {
         const response = await api.get(`${ORDER_DETAIL_ENDPOINT}?orderId=${orderId}`);
-        console.log(`📦 OrderDetails nhận được cho orderId ${orderId}:`, response.data);
+        
+        if (!response.data) {
+            console.warn(`⚠ Không có OrderDetails cho orderId ${orderId}`);
+            return [];
+        }
 
         return Array.isArray(response.data) ? response.data : [response.data];
     } catch (error) {
-        console.error(`❌ Lỗi khi lấy OrderDetails với orderId ${orderId}:`, error.response?.data || error.message);
+        console.error(`❌ Lỗi lấy OrderDetails orderId ${orderId}:`, error.response?.data || error.message);
         return [];
     }
 };
 
-
-
-
-
-
-export const createOrderDetail = async (orderDetail) => {
+export const createOrderDetail = async (orderId, orderDetail) => {
     try {
-        const response = await api.post(ORDER_DETAIL_ENDPOINT, orderDetail);
-        return response.data || null;
-    } catch {
+      if (!orderId || !orderDetail || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
+        console.error("❌ Dữ liệu tạo OrderDetail không hợp lệ!");
         return null;
+      }
+  
+      const response = await api.post(`/orders/${orderId}/order-details`, orderDetail);
+      return response.data || null;
+    } catch (error) {
+      console.error("❌ Lỗi API createOrderDetail:", error.response?.data || error.message);
+      return null;
     }
-};
-
+  };
+  
 export const updateOrderDetail = async (id, orderDetail) => {
     try {
+        if (!orderDetail || !orderDetail.orderId || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {
+            console.error("❌ Dữ liệu cập nhật không hợp lệ!", orderDetail);
+            return null;
+        }
+
         const response = await api.put(`${ORDER_DETAIL_ENDPOINT}/${id}`, orderDetail, {
             headers: { "Content-Type": "application/json" },
         });
 
         return response.status === 204 || response.data || null;
     } catch (error) {
-        console.error(`Lỗi khi cập nhật OrderDetail với id ${id}:`, error);
+        console.error(`❌ Lỗi cập nhật OrderDetail ID ${id}:`, error.response?.data || error.message);
         return null;
     }
 };
-
 
 export const deleteOrderDetail = async (id) => {
     try {

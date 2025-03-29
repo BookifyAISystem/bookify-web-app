@@ -12,7 +12,8 @@ import {
     Tag,
     Tooltip,
     Modal,
-    message
+    message,
+    Divider
 } from 'antd';
 import {
     SearchOutlined,
@@ -21,8 +22,9 @@ import {
     DeleteOutlined,
     ShoppingCartOutlined
 } from '@ant-design/icons';
-import { getAllOrders, deleteOrder, changeStatus } from "../../services/orderService";
+import { getAllOrders, deleteOrder, changeStatus, getOrderWithDetails } from "../../services/orderService";
 import moment from 'moment';
+import { color } from '@mui/system';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -39,6 +41,8 @@ const OrdersPage = () => {
         pageSize: 10,
         total: 0
     });
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         fetchOrders();
@@ -109,12 +113,30 @@ const OrdersPage = () => {
         });
     };
 
+    const handleViewDetails = async (record) => {
+        try {
+            setLoading(true);
+            const detailedOrder = await getOrderWithDetails(record.key);
+            if (detailedOrder) {
+                setSelectedOrder({
+                    ...record,
+                    orderDetails: detailedOrder.orderDetails
+                });
+                setIsModalVisible(true);
+            }
+        } catch (error) {
+            message.error('Không thể tải chi tiết đơn hàng');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const getStatusTag = (status) => {
         const statusConfig = {
-            0: { color: 'processing', text: 'Chờ xác nhận' },
-            1: { color: 'warning', text: 'Đang xử lý' },
-            2: { color: 'success', text: 'Hoàn thành' },
-            3: { color: 'error', text: 'Đã hủy' }
+            0: { color: 'error', text: 'Đã hủy' },
+            2: { color: 'success', text: 'Đặt hàng thành công' },
+            3: { color: 'warning', text: 'Thanh toán thành công' },
+            4: { color: 'success', text: 'Đã hoàn thành' }
         };
         const config = statusConfig[status] || { color: 'default', text: 'Không xác định' };
         return <Tag color={config.color}>{config.text}</Tag>;
@@ -162,12 +184,12 @@ const OrdersPage = () => {
                         value={record.status}
                         style={{ width: 120 }}
                         onChange={(value) => handleStatusChange(record.key, value)}
-                        disabled={record.status === 2 || record.status === 3}
+                        disabled={record.status === 4 || record.status === 0}
                     >
-                        <Option value={0}>Chờ xác nhận</Option>
-                        <Option value={1}>Đang xử lý</Option>
-                        <Option value={2}>Hoàn thành</Option>
-                        <Option value={3}>Đã hủy</Option>
+                        <Option value={0}>Đã hủy</Option>
+                        <Option value={2}>Đặt hàng thành công</Option>
+                        <Option value={3}>Thanh toán thành công</Option>
+                        <Option value={4}>Đã hoàn thành</Option>
                     </Select>
                     <Tooltip title="Xóa">
                         <Button 
@@ -175,7 +197,7 @@ const OrdersPage = () => {
                             icon={<DeleteOutlined />} 
                             size="small"
                             onClick={() => handleDelete(record.key)}
-                            disabled={record.status === 2}
+                            disabled={record.status === 3}
                         />
                     </Tooltip>
                 </Space>
@@ -215,10 +237,10 @@ const OrdersPage = () => {
                                             onChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
                                         >
                                             <Option value="all">Tất cả trạng thái</Option>
-                                            <Option value="0">Chờ xác nhận</Option>
-                                            <Option value="1">Đang xử lý</Option>
-                                            <Option value="2">Hoàn thành</Option>
-                                            <Option value="3">Đã hủy</Option>
+                                            <Option value="0">Đã hủy</Option>
+                                            <Option value="2">Đặt hàng thành công</Option>
+                                            <Option value="3">Thanh toán thành công</Option>
+                                            <Option value="4">Đã hoàn thành</Option>
                                         </Select>
                                         <Tooltip title="Làm mới">
                                             <Button 
@@ -243,6 +265,100 @@ const OrdersPage = () => {
                     </Card>
                 </Col>
             </Row>
+
+            <Modal
+                title={`Chi tiết đơn hàng ${selectedOrder?.orderId}`}
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={[
+                    <Button key="back" onClick={() => setIsModalVisible(false)}>
+                        Đóng
+                    </Button>
+                ]}
+                width={800}
+            >
+                {selectedOrder && (
+                    <div>
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Text strong>Mã đơn hàng:</Text> <Text>{selectedOrder.orderId}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Ngày đặt:</Text> <Text>{selectedOrder.createdDate}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Tổng tiền:</Text> <Text>{selectedOrder.total}</Text>
+                            </Col>
+                            <Col span={12}>
+                                <Text strong>Trạng thái:</Text> {getStatusTag(selectedOrder.status)}
+                            </Col>
+                            {selectedOrder.cancelReason && (
+                                <Col span={24}>
+                                    <Text strong>Lý do hủy:</Text> <Text>{selectedOrder.cancelReason}</Text>
+                                </Col>
+                            )}
+                        </Row>
+
+                        <Divider orientation="left">Chi tiết sản phẩm</Divider>
+                        <Table
+                            dataSource={selectedOrder.orderDetails}
+                            columns={[
+                                {
+                                    title: 'Sản phẩm',
+                                    dataIndex: 'bookName',
+                                    key: 'bookName',
+                                    render: (text, record) => (
+                                        <Space>
+                                            <img 
+                                                src={record.bookImage} 
+                                                alt={text} 
+                                                style={{ 
+                                                    width: 50, 
+                                                    height: 50, 
+                                                    objectFit: 'cover' 
+                                                }} 
+                                            />
+                                            <div>
+                                                <div>{text}</div>
+                                                <div style={{ color: '#666' }}>{record.author}</div>
+                                            </div>
+                                        </Space>
+                                    )
+                                },
+                                {
+                                    title: 'Số lượng',
+                                    dataIndex: 'quantity',
+                                    key: 'quantity',
+                                    width: 100,
+                                    align: 'right',
+                                },
+                                {
+                                    title: 'Đơn giá',
+                                    dataIndex: 'price',
+                                    key: 'price',
+                                    width: 150,
+                                    align: 'right',
+                                    render: (price) => price.toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    })
+                                },
+                                {
+                                    title: 'Thành tiền',
+                                    key: 'total',
+                                    width: 150,
+                                    align: 'right',
+                                    render: (_, record) => (record.price * record.quantity).toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    })
+                                }
+                            ]}
+                            pagination={false}
+                        />
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

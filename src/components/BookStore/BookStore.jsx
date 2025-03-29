@@ -3,29 +3,39 @@ import BookInforCard from "../BookInfor/BookInforCard";
 import { getAllBooks } from "../../services/bookService";
 import { getAccountID } from "../../services/accountService";
 import { createOrder, getOrderByAccount } from "../../services/orderService";
-import { getOrderDetailsByOrderId, createOrderDetail, updateOrderDetail } from "../../services/orderDetailService";
+import {
+  getOrderDetailsByOrderId,
+  createOrderDetail,
+  updateOrderDetail,
+} from "../../services/orderDetailService";
+import { Pagination } from "antd"; // dùng Ant Design
 import "./BookStore.css";
 
 const BookStore = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const pageSize = 12;
+
+  const fetchBooks = async (page) => {
+    setLoading(true);
+    try {
+      const response = await getAllBooks("", page, pageSize);
+      if (response?.books) {
+        setBooks(response.books);
+        setTotalItems(response.totalItems);
+      }
+    } catch {
+      console.error("Lỗi khi lấy dữ liệu sách.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await getAllBooks();
-        if (response?.books) {
-          setBooks(response.books);
-        }
-      } catch {
-        console.error("Lỗi khi lấy dữ liệu sách.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
+    fetchBooks(currentPage);
+  }, [currentPage]);
 
   const handleAddToCart = async (book) => {
     const accountId = getAccountID();
@@ -43,7 +53,7 @@ const BookStore = () => {
           orderDetails: [],
         });
 
-        if (!order || !order.orderId) {
+        if (!order?.orderId) {
           alert("Không thể tạo đơn hàng.");
           return;
         }
@@ -97,16 +107,33 @@ const BookStore = () => {
   return (
     <div className="bookstore-container">
       <h1 className="bookstore-title">Kho sách</h1>
+
       {loading ? (
         <p className="loading-message">Đang tải dữ liệu...</p>
       ) : books.length === 0 ? (
         <p className="no-books-message">Không có sách nào.</p>
       ) : (
-        <div className="book-grid">
-          {books.map((book) => (
-            <BookInforCard key={book.bookId} book={book} onAddToCart={() => handleAddToCart(book)} />
-          ))}
-        </div>
+        <>
+          <div className="book-grid">
+            {books.map((book) => (
+              <BookInforCard
+                key={book.bookId}
+                book={book}
+                onAddToCart={() => handleAddToCart(book)}
+              />
+            ))}
+          </div>
+
+          <div className="pagination-wrapper">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={totalItems}
+              onChange={(page) => setCurrentPage(page)}
+              showSizeChanger={false}
+            />
+          </div>
+        </>
       )}
     </div>
   );
