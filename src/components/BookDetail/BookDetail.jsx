@@ -160,7 +160,7 @@ const BookDetail = () => {
     setGeneratedImage(null); // Xóa ảnh cũ
   
     try {
-      const response = await fetch(`http://minetsbd.fun:5002/api/v1/open-ai/generateImage?input=${encodeURIComponent(imagePrompt)}`);
+      const response = await fetch(`https://bookifyapi.azurewebsites.net/api/v1/open-ai/generateImage?input=${encodeURIComponent(imagePrompt)}`);
       const data = await response.json();
       
       console.log("📢 API Response:", data); // Debug API response
