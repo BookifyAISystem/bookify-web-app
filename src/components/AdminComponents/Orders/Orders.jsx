@@ -37,6 +37,9 @@ const Orders = () => {
   const [loading, setLoading] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderDetails, setOrderDetails] = useState([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
 
   const fetchAccount = async (accountId) => {
     const account = await getAccountById(accountId);
@@ -78,6 +81,7 @@ const Orders = () => {
             cancelReason: order.cancelReason
           })))
           setOrders(mappedOrders)
+          setTotalCount(response.length)
         }
       } catch (error) {
         console.error('Lỗi khi tải đơn hàng:', error)
@@ -87,6 +91,12 @@ const Orders = () => {
 
     fetchOrders()
   }, [])
+
+  // Handle pagination changes
+  const handlePaginationModelChange = (newModel) => {
+    setPage(newModel.page);
+    setPageSize(newModel.pageSize);
+  };
 
   const renderOrderDetail = () => (
     <Card title={`Chi tiết đơn hàng #${selectedOrder.id}`}>
@@ -150,6 +160,14 @@ const Orders = () => {
           slots={{ toolbar: GridToolbar }}
           disableRowSelectionOnClick
           autoHeight
+          pagination
+          pageSizeOptions={[5, 10, 20, 50]}
+          paginationModel={{ page, pageSize }}
+          paginationMode="client"
+          onPaginationModelChange={handlePaginationModelChange}
+          rowCount={totalCount}
+          getRowId={(row) => row.id}
+          checkboxSelection
         />
       </div>
 

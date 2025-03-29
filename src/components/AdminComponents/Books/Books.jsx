@@ -70,8 +70,8 @@ const Books = () => {
               publishYear: book.publishYear,
               categoryId: await fetchCategory(book.categoryId),
               authorId: await fetchAuthor(book.authorId),
-              createdDate: new Date(book.createdDate),
-              lastEdited: new Date(book.lastEdited),
+              createdDate: new Date(book.createdDate).toLocaleDateString('vi-VN'),
+              lastEdited: new Date(book.lastEdited).toLocaleDateString('vi-VN'),
             }))
           );
   
@@ -87,60 +87,120 @@ const Books = () => {
     fetchBooks();
   }, [page, pageSize]);
   
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
   
-  
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setPage(0); // Reset to first page when changing page size
+  };
 
-    return (
-      <div className='books'>
-        <div className='info'>
-          <h1>Quản lý sách</h1>
-        </div>
-  
-        <div className="dataTable">
-                <DataGrid
-                  className="dataGrid"
-                  rows={books}
-                  columns={[...columns, {
-                    field: "action",
-                    headerName: "Hành động",
-                    width: 100,
-                    renderCell: (params) => (
-                      <div className="action">
-                        <Link to={`/admin/book/${params.row.id}`}>
-                          <img src="/view.png" alt="View" />
-                        </Link>
-                        <div
-                            className="edit"
-                            onClick={() => {
-                              setSelectedBook(params.row);
-                              setOpen(true);
-                            }}
-                        >
-                          <img src="/edit.svg" alt="Edit" />
-                        </div>
-                        <div className="delete" onClick={() => console.log("Delete", params.row.id)}>
-                          <img src="/delete.svg" alt="Delete" />
-                        </div>
-                      </div>
-                    ),
-                  }]}
-                  rowCount={totalCount}
-                  loading={loading}
-                  page={page}
-                  pageSize={pageSize}
-                  paginationMode="server"
-                  onPageChange={(newPage) => setPage(newPage)}
-                  onPageSizeChange={(newSize) => setPageSize(newSize)}
-                  pageSizeOptions={[10]}
-                  slots={{ toolbar: GridToolbar }}
-                  checkboxSelection
-                  disableRowSelectionOnClick
-                />
-              </div>
-  
-  
+  return (
+    <div className='books'>
+      <div className='info'>
+        <h1>Quản lý sách</h1>
+        <button 
+          className="addButton" 
+          onClick={() => {
+            setSelectedBook(null);
+            setOpen(true);
+          }}
+        >
+          Thêm sách mới
+        </button>
       </div>
-    )
-  }
+
+      <div className="dataTable">
+        <DataGrid
+          className="dataGrid"
+          rows={books}
+          columns={[...columns, {
+            field: "action",
+            headerName: "Hành động",
+            width: 100,
+            renderCell: (params) => (
+              <div className="action">
+                <Link to={`/admin/book/${params.row.id}`}>
+                  <img src="/view.png" alt="View" />
+                </Link>
+                <div
+                    className="edit"
+                    onClick={() => {
+                      setSelectedBook(params.row);
+                      setOpen(true);
+                    }}
+                >
+                  <img src="/edit.svg" alt="Edit" />
+                </div>
+                <div className="delete" onClick={() => console.log("Delete", params.row.id)}>
+                  <img src="/delete.svg" alt="Delete" />
+                </div>
+              </div>
+            ),
+          }]}
+          rowCount={totalCount}
+          loading={loading}
+          pageSizeOptions={[5, 10, 20, 50]}
+          paginationModel={{ page, pageSize }}
+          paginationMode="server"
+          onPaginationModelChange={(newModel) => {
+            setPage(newModel.page);
+            setPageSize(newModel.pageSize);
+          }}
+          pagination
+          autoHeight
+          getRowId={(row) => row.id}
+          slots={{ toolbar: GridToolbar }}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </div>
+
+      {open && (
+        <Add 
+          slug="book" 
+          columns={columns} 
+          setOpen={setOpen} 
+          initialValues={selectedBook}
+          onSubmitSuccess={() => {
+            // Refresh data after adding/editing
+            const fetchBooks = async () => {
+              setLoading(true);
+              try {
+                const response = await getAllBooks("", page + 1, pageSize);
+                if (response?.books) {
+                  const mappedBooks = await Promise.all(
+                    response.books.map(async (book) => ({
+                      id: book.bookId,
+                      img: book.bookImage,
+                      bookName: book.bookName,
+                      bookType: book.bookType,
+                      price: book.price,
+                      priceEbook: book.priceEbook,
+                      quantity: book.quantity,
+                      publishYear: book.publishYear,
+                      categoryId: await fetchCategory(book.categoryId),
+                      authorId: await fetchAuthor(book.authorId),
+                      createdDate: new Date(book.createdDate),
+                      lastEdited: new Date(book.lastEdited),
+                    }))
+                  );
+          
+                  setBooks(mappedBooks);
+                  setTotalCount(response.totalItems);
+                }
+              } catch (error) {
+                console.error('Error fetching books:', error);
+              }
+              setLoading(false);
+            };
+            fetchBooks();
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 export default Books
