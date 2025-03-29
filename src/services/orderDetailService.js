@@ -51,10 +51,6 @@ export const createOrderDetail = async (orderId, orderDetail) => {
     }
   };
   
-  
-
-
-
 export const updateOrderDetail = async (id, orderDetail) => {
     try {
         if (!orderDetail || !orderDetail.orderId || !orderDetail.bookId || orderDetail.quantity <= 0 || orderDetail.price <= 0) {

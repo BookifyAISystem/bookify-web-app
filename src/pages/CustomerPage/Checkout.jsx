@@ -75,11 +75,12 @@ const Checkout = () => {
   );
 
   const handlePayment = async () => {
+    // debugger;
     try {
       await changeStatus(orderId, 2);
       if (paymentMethod === "VNPay") {
         // Tạo URL thanh toán VNPay từ backend
-        const response = await fetch(`http://minetsbd.fun:5002/api/v1/Vnpay/CreatePaymentUrlByOrder?orderId=${orderId}`, {
+        const response = await fetch(`https://localhost:7088/api/v1/Vnpay/CreatePaymentUrlByOrder?orderId=${orderId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });

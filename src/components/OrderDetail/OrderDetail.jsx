@@ -59,9 +59,11 @@ const OrderDetail = () => {
       case 2:
         return { text: "Đã đặt", color: "#ff9800" }; // Orange
       case 3:
-        return { text: "Đã giao", color: "#4caf50" }; // Green
+        return { text: "Đã Thanh Toán", color: "#4caf50" }; // Green
       case 4:
-        return { text: "Đã hủy", color: "#f44336" }; // Red
+        return { text: "Đã Hoàn Thành", color: "#4caf50" }; 
+      case 0:
+        return { text: "Đã hủy", color: "#f44336" };
       default:
         return { text: "Không xác định", color: "#9e9e9e" }; // Grey
     }

@@ -54,9 +54,14 @@ const handleRemoveFromWishlist = async (wishlistDetailId) => {
       const fetchOrders = async () => {
         setOrdersLoading(true);
         try {
-          let data = await getOrdersByAccount(id, 2);
-  
-          // ✅ Cập nhật lại total bằng cách tính tổng dựa trên orderDetails
+          // Fetch orders for multiple statuses and combine the results
+          const statusList = [0, 2, 3, 4];
+          const orderPromises = statusList.map(status => getOrdersByAccount(id, status));
+          const ordersResults = await Promise.all(orderPromises);
+          
+          // Flatten the array of arrays and calculate totals
+          const data = ordersResults.flat();
+          
           const updatedOrders = data.map(order => ({
             ...order,
             total: order.orderDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0)
@@ -197,13 +202,37 @@ const handleRemoveFromWishlist = async (wishlistDetailId) => {
       navigate(`/order/${orderId}`);
   };
   
+    const getStatusText = (status) => {
+      switch (status) {
+        case 1:
+          return { text: "Trong giỏ hàng", color: "#007bff" }; // Blue
+        case 2:
+          return { text: "Đã đặt", color: "#ff9800" }; // Orange
+        case 3:
+          return { text: "Đã Thanh Toán", color: "#4caf50" }; // Green
+        case 4:
+          return { text: "Đã Hoàn Thành", color: "#4caf50" }; 
+        case 0:
+          return { text: "Đã hủy", color: "#f44336" };
+        default:
+          return { text: "Không xác định", color: "#9e9e9e" }; // Grey
+      }
+    };
     
     // Cột của DataGrid
     const columns = [
       { title: "Mã đơn hàng", dataIndex: "orderId", key: "orderId" },
       { title: "Ngày tạo", dataIndex: "createdDate", key: "createdDate", render: (date) => new Date(date).toLocaleString() },
       { title: "Tổng tiền", dataIndex: "total", key: "total", render: (total) => `${total.toLocaleString()} VND` },
-      { title: "Trạng thái", dataIndex: "status", key: "status", render: (status) => status === 2 ? "Đã gửi" : "Đã giao" },
+      { 
+        title: "Trạng thái", 
+        dataIndex: "status", 
+        key: "status", 
+        render: (status) => {
+          const { text, color } = getStatusText(status);
+          return <span style={{ color }}>{text}</span>;
+        }
+      },
       {
         title: "Hành động",
         key: "actions",
